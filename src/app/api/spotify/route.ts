@@ -22,7 +22,7 @@ export async function GET(req: Request) {
     const topTracksInAllTime = await getTopTracks(session.accessToken, 'long_term', limit);
     const playlists = await getPlaylists(session.accessToken, limit, offset);
     const devices = await getDevices(session.accessToken);
-    const favorites = await getSavedTracks(session.accessToken);
+    const savedTracks = await getSavedTracks(session.accessToken);
 
     await syncFavoritesWithSpotify(session.accessToken, session.user.spotifyId); // NOTE: サーバーサイドで実行する
 
@@ -33,7 +33,7 @@ export async function GET(req: Request) {
       topTracksInAllTime,
       playlists,
       devices,
-      favorites,
+      savedTracks,
     });
   } catch (error) {
     console.error("Failed to fetch Spotify data:", error);

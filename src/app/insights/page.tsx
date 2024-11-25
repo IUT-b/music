@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import TrackTable from '../components/TrackTable';
+import TimelineChart from "../components/TimelineChart";
 
 type Track = {
     id: string;
@@ -16,6 +17,7 @@ export default function InsightsPage() {
     const [tracksIn4Weeks, setTracksIn4Weeks] = useState<Track[]>([]);
     const [tracksIn6Months, setTracksIn6Months] = useState<Track[]>([]);
     const [tracksInAllTime, setTracksInAllTime] = useState<Track[]>([]);
+    const [savedTracks, setSavedTracks] = useState<Track[]>([]);
     const [favorites, setFavorites] = useState<Track[]>([]);
 
     useEffect(() => {
@@ -24,8 +26,25 @@ export default function InsightsPage() {
             setTracksIn4Weeks(JSON.parse(spotifyData).topTracksIn4Weeks);
             setTracksIn6Months(JSON.parse(spotifyData).topTracksIn6Months);
             setTracksInAllTime(JSON.parse(spotifyData).topTracksInAllTime);
-            setFavorites(JSON.parse(spotifyData).favorites);
+            setSavedTracks(JSON.parse(spotifyData).savedTracks);
         }
+
+        // 登録済のお気に入り登録期間を取得
+        const fetchFavorites = async () => {
+            try {
+                const response = await fetch('/api/favorite');
+                if (response.ok) {
+                    const data = await response.json();
+                    setFavorites(data);
+                } else {
+                    throw new Error('Failed to fetch favorites');
+                }
+            } catch (error) {
+                console.error('Error fetching favorites:', error);
+            }
+        };
+
+        fetchFavorites();
     }, []);
 
     if (!tracksIn4Weeks) {
@@ -38,7 +57,8 @@ export default function InsightsPage() {
             <TrackTable title="Top Tracks in 4 Weeks" tracks={tracksIn4Weeks} />
             <TrackTable title="Top Tracks in 6 Months" tracks={tracksIn6Months} />
             <TrackTable title="Top Tracks of All Time" tracks={tracksInAllTime} />
-            <TrackTable title="Favorite Tracks" tracks={favorites} />
+            <TrackTable title="Favorite Tracks" tracks={savedTracks} />
+            <TimelineChart favorites={favorites} />
         </div>
     );
 };
