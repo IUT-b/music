@@ -1,23 +1,7 @@
 // TODO: 順位の推移を表示する
 import React from "react";
+import { Track, Playlist } from '@/types/spotify';
 import MenuButton from "./MenuButton";
-
-type Track = {
-  id: string;
-  name: string;
-  artist: string;
-  album: string;
-  imageUrl: string;
-  popularity: number;
-  trackUrl: string;
-};
-
-type Playlist = {
-  name: string;
-  description: string;
-  imageUrl: string;
-  tracks: Track[];
-};
 
 interface Props {
   spotifyId: string;

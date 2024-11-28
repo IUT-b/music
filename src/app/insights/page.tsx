@@ -1,18 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Track, Playlist } from '@/types/spotify';
 import TrackTable from '../components/TrackTable';
 import TimelineChart from "../components/TimelineChart";
-
-type Track = {
-  id: string;
-  name: string;
-  artist: string;
-  album: string;
-  imageUrl: string;
-  popularity: number;
-  trackUrl: string;
-};
 
 export default function InsightsPage() {
   const [spotifyId, setSpotifyId] = useState<string | null>(null);

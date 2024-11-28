@@ -1,22 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Playlist, Device } from '@/types/spotify';
 import Select from '../components/Select';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { formatDate } from '@/lib/date';
-
-type Playlist = {
-  id: string;
-  name: string;
-  description: string;
-  imageUrl: string;
-};
-
-type Device = {
-  id: string;
-  name: string;
-};
 
 export default function SchedulePage() {
   const [devices, setDevices] = useState<Device[]>([]);                       // 登録済の全デバイス

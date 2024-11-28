@@ -2,25 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { createPlaylist } from '@/lib/spotify';
+import { Track, Playlist } from '@/types/spotify';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Select from '../components/Select';
 import TrackTable from '../components/TrackTable';
-
-type Track = {
-  trackName: string;
-  artistName: string;
-  albumName: string;
-  albumImageUrl: string;
-  trackUrl: string;
-};
-
-type Playlist = {
-  name: string;
-  description: string;
-  imageUrl: string;
-  tracks: Track[];
-};
 
 export default function PlaylistsPage() {
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -127,7 +113,7 @@ export default function PlaylistsPage() {
       <div className="flex">
         {/* 左側にプレイリスト一覧を表示 */}
         <div className="w-1/4 p-4">
-          <h1>Spotify Playlists</h1>
+          <h1>プレイリスト</h1>
           <ul>
             {playlists.map((playlist, index) => (
               <li key={index} className="mb-4 cursor-pointer" onClick={() => handlePlaylistSelect(playlist)}>
@@ -211,6 +197,29 @@ export default function PlaylistsPage() {
           </form>
         </div>
       </div>
+      <style jsx>{`
+        .playlist {
+          width: 100%;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+
+        .album-art {
+          width: 50px;
+          height: 50px;
+          border-radius: 5px;
+          margin-right: 10px;
+        }
+
+        .truncate {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 200px; /* 最大幅を設定（調整可） */
+        }
+    `}</style>
     </div>
+
   );
 }

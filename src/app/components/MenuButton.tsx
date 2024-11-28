@@ -2,22 +2,8 @@
 
 import React from "react";
 import { useState, useRef, useEffect } from 'react';
+import { Track, Playlist } from '@/types/spotify';
 import { addTrackToSavedTracks, removeTrackFromSavedTracks, removeTracksFromPlaylist } from '@/lib/spotify';
-
-type Track = {
-  id: string;
-  name: string;
-  artist: string;
-  album: string;
-  imageUrl: string;
-  popularity: number;
-  trackUrl: string;
-};
-
-type Playlist = {
-  id: string;
-  name: string;
-};
 
 interface Props {
   accessToken: string;

@@ -64,7 +64,6 @@ export async function GET(req: Request) {
       responseData.topTracksInAllTime = topTracksInAllTime;
     }
     if (!dataType || dataType === 'playlists') {
-      console.log('aaaaaaaaaaa');
       const playlists = await getPlaylists(session.accessToken, limit, offset);
 
       // プレイリスト内の曲を取得
