@@ -215,6 +215,7 @@ export async function getSavedTracks(token: string) {
         album: item.track.album.name,
         imageUrl: item.track.album.images[0]?.url,
         popularity: item.track.popularity,
+        trackUrl: item.track.external_urls.spotify,
       }))];
 
       // 次のページがない場合はループを終了

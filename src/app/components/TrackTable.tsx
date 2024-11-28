@@ -1,4 +1,3 @@
-// TODO: トラックの外部リンクを有効にする
 // TODO: 順位の推移を表示する
 import MenuButton from "./MenuButton";
 
@@ -9,6 +8,7 @@ type Track = {
   album: string;
   imageUrl: string;
   popularity: number;
+  trackUrl: string;
 };
 
 type Playlist = {
@@ -27,6 +27,7 @@ interface Props {
   // onCheckboxChange: (trackId: string, checked: boolean) => void;
   playlists: Playlist[];
   isShowingPlaylist: boolean;
+  // updateSavedTracks: (updatedTracks: Track[]) => void;
 }
 
 // TODO: トラックの外部リンクを有効にする
@@ -60,7 +61,14 @@ const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShow
                   <img src={track.imageUrl} alt={track.album} className="album-art" />
                 </td>
                 <td>
-                  <p className="text-black truncate" title={track.name}>{track.name}</p>
+                  <a
+                    href={track.trackUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    <p className="text-black truncate" title={track.name}>{track.name}</p>
+                  </a>
                   <p className="text-gray-600 text-sm truncate" title={track.artist}>{track.artist}</p>
                 </td>
                 <td>

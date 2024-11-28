@@ -12,6 +12,7 @@ type Track = {
   album: string;
   imageUrl: string;
   popularity: number;
+  trackUrl: string;
 };
 
 export default function InsightsPage() {
@@ -164,6 +165,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
+      // updateSavedTracks={updateSavedTracks}
       />
       <TrackTable
         accessToken={accessToken}
@@ -172,6 +174,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
+      // updateSavedTracks={updateSavedTracks}
       />
       <TrackTable
         accessToken={accessToken}
@@ -180,6 +183,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
+      // updateSavedTracks={updateSavedTracks}
       />
       <TrackTable
         accessToken={accessToken}
@@ -188,6 +192,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
+      // updateSavedTracks={updateSavedTracks}
       />
       <TimelineChart favorites={favorites} />
     </div>
