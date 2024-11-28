@@ -1,4 +1,5 @@
 // TODO: 順位の推移を表示する
+import React from "react";
 import MenuButton from "./MenuButton";
 
 type Track = {
@@ -27,11 +28,10 @@ interface Props {
   // onCheckboxChange: (trackId: string, checked: boolean) => void;
   playlists: Playlist[];
   isShowingPlaylist: boolean;
-  // updateSavedTracks: (updatedTracks: Track[]) => void;
+  setSavedTracks: React.Dispatch<React.SetStateAction<Track[]>>;
 }
 
-// TODO: トラックの外部リンクを有効にする
-const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShowingPlaylist }: Props) => (
+const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShowingPlaylist, setSavedTracks }: Props) => (
   <div className="mt-6">
     <div className="playlist">
       <h2>{title}</h2>
@@ -61,13 +61,8 @@ const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShow
                   <img src={track.imageUrl} alt={track.album} className="album-art" />
                 </td>
                 <td>
-                  <a
-                    href={track.trackUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    <p className="text-black truncate" title={track.name}>{track.name}</p>
+                  <a href={track.trackUrl} target="_blank" rel="noopener noreferrer">
+                    <p className="text-gray-600 font-semibold truncate" title={track.name}>{track.name}</p>
                   </a>
                   <p className="text-gray-600 text-sm truncate" title={track.artist}>{track.artist}</p>
                 </td>
@@ -113,7 +108,14 @@ const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShow
                   )}
                 </td>
                 <td>
-                  <MenuButton accessToken={accessToken} trackId={track.id} playlists={playlists} isShowingPlaylist={isShowingPlaylist} />
+                  <MenuButton
+                    accessToken={accessToken}
+                    selectedTrack={track}
+                    playlists={playlists}
+                    isShowingPlaylist={isShowingPlaylist}
+                    savedTracks={savedTracks}
+                    setSavedTracks={setSavedTracks}
+                  />
                 </td>
               </tr>
             )

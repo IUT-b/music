@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import TopTrackTable from '../components/TopTrackTable';
 import TrackTable from '../components/TrackTable';
 import TimelineChart from "../components/TimelineChart";
 
@@ -151,6 +150,18 @@ export default function InsightsPage() {
     fetchPlaylists();
   }, [spotifyId]); // NOTE: spotifyIdを取得後に実施
 
+  // お気に入りを追加・削除する関数
+  const handleSaveTrack = (track: Track) => {
+    setSavedTracks((prevTracks) => {
+      // 既に保存されているトラックなら削除
+      if (prevTracks.some((savedTrack) => savedTrack.id === track.id)) {
+        return prevTracks.filter((savedTrack) => savedTrack.id !== track.id);
+      }
+      // 保存されていない場合は追加
+      return [...prevTracks, track];
+    });
+  };
+
   if (tracksIn4Weeks.length === 0 || tracksIn6Months.length === 0 || tracksInAllTime.length === 0) {
     return <div>Loading...</div>;
   }
@@ -165,7 +176,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
-      // updateSavedTracks={updateSavedTracks}
+        setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
       />
       <TrackTable
         accessToken={accessToken}
@@ -174,7 +185,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
-      // updateSavedTracks={updateSavedTracks}
+        setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
       />
       <TrackTable
         accessToken={accessToken}
@@ -183,7 +194,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
-      // updateSavedTracks={updateSavedTracks}
+        setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
       />
       <TrackTable
         accessToken={accessToken}
@@ -192,7 +203,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
-      // updateSavedTracks={updateSavedTracks}
+        setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
       />
       <TimelineChart favorites={favorites} />
     </div>

@@ -1,25 +1,38 @@
 'use client';
 
+import React from "react";
 import { useState, useRef, useEffect } from 'react';
 import { addTrackToSavedTracks, removeTrackFromSavedTracks } from '@/lib/spotify';
+
+type Track = {
+  id: string;
+  name: string;
+  artist: string;
+  album: string;
+  imageUrl: string;
+  popularity: number;
+  trackUrl: string;
+};
 
 type Playlist = {
   id: string;
   name: string;
 };
 
-type Props = {
-  spotifyId: string;
+interface Props {
   accessToken: string;
-  trackId: string;
+  selectedTrack: Track[];
   playlists: Playlist[];
-  isShowingPlaylist: boolean
-};
+  isShowingPlaylist: boolean;
+  savedTracks: Track[];
+  setSavedTracks: React.Dispatch<React.SetStateAction<Track[]>>;
+}
 
-export default function MenuButton({ accessToken, trackId, playlists, isShowingPlaylist }: Props) {
+export default function MenuButton({ accessToken, selectedTrack, playlists, isShowingPlaylist, savedTracks, setSavedTracks }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen2, setIsModalOpen2] = useState(false);
 
   // メニュー外をクリックした場合にメニューを閉じる
   useEffect(() => {
@@ -45,9 +58,19 @@ export default function MenuButton({ accessToken, trackId, playlists, isShowingP
     setIsModalOpen(true);
   };
 
+  // モーダルを開く
+  const openModal2 = () => {
+    setIsModalOpen2(true);
+  };
+
   // モーダルを閉じる
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  // モーダルを閉じる
+  const closeModal2 = () => {
+    setIsModalOpen2(false);
   };
 
   // Spotifyとデータベースのお気に入りを同期
@@ -69,10 +92,11 @@ export default function MenuButton({ accessToken, trackId, playlists, isShowingP
   const handleAddToFavorites = async () => {
     try {
       // TODO: お気に入りに登録済の場合の処理が必要
-      await addTrackToSavedTracks(accessToken, [trackId]);
-      console.log(`Added track ${trackId} to favorites.`);
+      await addTrackToSavedTracks(accessToken, [selectedTrack.id]);
 
       syncFavoritesWithSpotify();
+
+      setSavedTracks([...savedTracks, selectedTrack]);
 
       setIsMenuOpen(false);
     } catch (error) {
@@ -83,10 +107,11 @@ export default function MenuButton({ accessToken, trackId, playlists, isShowingP
   // お気に入りから削除
   const handleRemoveFromFavorites = async () => {
     try {
-      await removeTrackFromSavedTracks(accessToken, [trackId]);
-      console.log(`Removed track ${trackId} from favorites.`);
+      await removeTrackFromSavedTracks(accessToken, [selectedTrack.id]);
 
       syncFavoritesWithSpotify();
+
+      setSavedTracks(savedTracks.filter((track) => track.id !== selectedTrack.id));
 
       setIsMenuOpen(false);
     } catch (error) {
@@ -170,7 +195,40 @@ export default function MenuButton({ accessToken, trackId, playlists, isShowingP
         </div>
       )}
 
-      {/* モーダル */}
+      {/* プレイリストへ追加モーダル */}
+      {isModalOpen2 && (
+        <div
+          className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50"
+          onClick={closeModal} // 外側をクリックで閉じる
+        >
+          <div
+            className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()} // モーダル内クリックで閉じない
+          >
+            <h2 className="text-lg font-bold mb-4">プレイリストを選択</h2>
+            <ul className="space-y-4">
+              {playlists.map((playlist) => (
+                <li key={playlist.id}>
+                  <button
+                    onClick={() => handleAddToPlaylist(playlist)}
+                    className="w-full text-left py-2 px-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                  >
+                    {playlist.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={closeModal2}
+              className="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg"
+            >
+              閉じる
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* プレイリストから削除モーダル */}
       {isModalOpen && (
         <div
           className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50"
