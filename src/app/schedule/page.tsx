@@ -203,7 +203,6 @@ export default function SchedulePage() {
             {message && <p className="text-green-500 text-sm">{message}</p>}
           </div>
 
-          {/* ボタン */}
           <Button type="submit" label="スケジュール保存" />
         </form>
       </div>

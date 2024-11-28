@@ -176,6 +176,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
+        showingPlaylist={{}}
         setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
       />
       <TrackTable
@@ -185,6 +186,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
+        showingPlaylist={{}}
         setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
       />
       <TrackTable
@@ -194,6 +196,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
+        showingPlaylist={{}}
         setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
       />
       <TrackTable
@@ -203,6 +206,7 @@ export default function InsightsPage() {
         savedTracks={savedTracks}
         playlists={playlists}
         isShowingPlaylist={false}
+        showingPlaylist={{}}
         setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
       />
       <TimelineChart favorites={favorites} />

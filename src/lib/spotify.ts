@@ -59,6 +59,37 @@ export async function getTopTracks(token: string, timeRange = 'medium_term', lim
   }
 }
 
+/**
+ * Spotify API: プレイリストを作成
+ * @param token Spotify のアクセストークン
+ * @param userId Spotify のユーザー ID
+ * @param name プレイリスト名
+ * @param description プレイリストの説明（省略可能）
+ * @param isPublic 公開設定（デフォルトは非公開）
+ * @returns 成功時のレスポンスボディ
+ */
+export async function createPlaylist(
+  token: string,
+  name: string,
+  description: string = '',
+  isPublic: boolean = false
+) {
+  spotifyApi.setAccessToken(token);
+
+  try {
+    const response = await spotifyApi.createPlaylist(name, {
+      description,
+      public: isPublic,
+    });
+
+    console.log('Successfully created playlist:', response.body);
+    return response.body;
+  } catch (error) {
+    console.error('Error creating playlist:', error);
+    throw new Error('Failed to create playlist on Spotify.');
+  }
+}
+
 // Spotifyのplaylistを取得
 export async function getPlaylists(token: string, limit = 10, offset = 0) {
   spotifyApi.setAccessToken(token);
@@ -71,7 +102,7 @@ export async function getPlaylists(token: string, limit = 10, offset = 0) {
         name: playlist.name,
         id: playlist.id,
         description: playlist.description,
-        imageUrl: playlist.images[0]?.url,
+        imageUrl: playlist.images?.length ? playlist.images[0].url : null,
         owner: playlist.owner.display_name,
         trackCount: playlist.tracks.total,
       }));

@@ -28,10 +28,11 @@ interface Props {
   // onCheckboxChange: (trackId: string, checked: boolean) => void;
   playlists: Playlist[];
   isShowingPlaylist: boolean;
+  showingPlaylist: Playlist[];
   setSavedTracks: React.Dispatch<React.SetStateAction<Track[]>>;
 }
 
-const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShowingPlaylist, setSavedTracks }: Props) => (
+const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShowingPlaylist, showingPlaylist, setSavedTracks }: Props) => (
   <div className="mt-6">
     <div className="playlist">
       <h2>{title}</h2>
@@ -115,6 +116,8 @@ const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShow
                     isShowingPlaylist={isShowingPlaylist}
                     savedTracks={savedTracks}
                     setSavedTracks={setSavedTracks}
+                    showingPlaylist={showingPlaylist}
+                    isTrackSaved={isTrackSaved}
                   />
                 </td>
               </tr>
@@ -131,64 +134,11 @@ const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShow
         padding: 20px;
       }
 
-      .track-list {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .track-item {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        border-bottom: 1px solid #333;
-        position: relative;
-      }
-
-      .track-rank {
-        width: 10px;
-        margin-right: 15px;
-      }
-
       .album-art {
         width: 50px;
         height: 50px;
         border-radius: 5px;
         margin-right: 10px;
-      }
-
-      .track-name {
-        font-weight: bold;
-        font-size: 1rem;
-        margin-bottom: 5px;
-      }
-
-      .artist-name {
-        font-weight: lighter;
-        font-size: 0.9rem;
-        color: #666;
-      }
-
-      .track-info {
-        flex: 1;
-        font-weight: lighter;
-        font-size: 0.9rem;
-        color: #666;
-      }
-
-      .track-info_sub {
-        flex: 1;
-        font-weight: lighter;
-        font-size: 0.9rem;
-        color: #666;
-      }
-
-      .track-actions {
-        display: flex
-        flex-direction: row;
-        // align-items: flex-end;
-        align-items: center;
-        position: absolute; /* ボタンを絶対位置に変更 */
-        right: 10px; /* 右端に配置 */
       }
 
       .truncate {
