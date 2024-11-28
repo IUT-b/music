@@ -2,7 +2,6 @@
 
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from 'react';
-import { syncFavoritesWithSpotify } from "@/lib/syncFavorites";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -10,7 +9,8 @@ export default function Home() {
 
   useEffect(() => {
     if (session) {
-      // Spotifyのデータ(ユーザ情報、音楽データ等)を取得
+      // Spotifyのデータ(ユーザ情報、音楽データ等)を取得し、sessionに保存
+      // TODO: ここでsessionにspotifyDataを保存しないと他でエラーになる
       const fetchSpotifyData = async () => {
         try {
           const response = await fetch('/api/spotify');
@@ -21,9 +21,6 @@ export default function Home() {
           // Spotifyのデータをsessionに保存
           const data = await response.json();
           sessionStorage.setItem('spotifyData', JSON.stringify(data));
-
-          // syncFavoritesWithSpotify(session.accessToken, session.user.spotifyId);
-
         } catch (error) {
           setError(error.message);
         }

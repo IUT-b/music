@@ -37,8 +37,6 @@ const formatFavoritesForTimeline = (favorites: Favorite[]) => {
   return chartData;
 };
 
-
-
 const TimelineChart: React.FC<TimelineChartProps> = ({ favorites }) => {
   const data = [
     ["Track Name", "Event", "Start Date", "End Date"], // ヘッダー
@@ -52,7 +50,7 @@ const TimelineChart: React.FC<TimelineChartProps> = ({ favorites }) => {
     hAxis: {
       format: "yyyy-MM-dd",
     },
-    colors: ["#4285F4"], // 塗りつぶしの色を指定（青）
+    colors: ["#4ade80"], // 塗りつぶしの色を指定（青）
   };
 
   // 動的に高さを計算（1行あたり50px）

@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react"; // NextAuthのuseSessionフックとsignOutをインポート
+import { usePathname } from 'next/navigation';
 
 export default function Example() {
   const { data: session } = useSession(); // セッションデータを取得
+  const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // ドロップダウンメニューの表示状態を管理
 
   const handleSignOut = () => {
@@ -25,20 +27,49 @@ export default function Example() {
         </div>
 
         <div className="hidden lg:flex lg:gap-x-12">
-          <Link className="no-underline text-sm/6 font-semibold text-gray-900" href="/insights">Insights</Link>
-          <Link className="no-underline text-sm/6 font-semibold text-gray-900" href="/recommends">Recommends</Link>
-          <Link className="no-underline text-sm/6 font-semibold text-gray-900" href="/playlists">Playlists</Link>
-          <Link className="no-underline text-sm/6 font-semibold text-gray-900" href="/schedule">Schedule</Link>
+          <Link
+            className={`font-semibold text-sm/6 text-gray-900 ${pathname === '/insights' ? 'border-b-2 border-black' : ''}`}
+            href="/insights"
+          >
+            Insights
+          </Link>
+          <Link
+            className={`font-semibold text-sm/6 text-gray-900 ${pathname === '/recommends' ? 'border-b-2 border-black' : ''}`}
+            href="/recommends"
+          >
+            Recommends
+          </Link>
+          <Link
+            className={`font-semibold text-sm/6 text-gray-900 ${pathname === '/playlists' ? 'border-b-2 border-black' : ''}`}
+            href="/playlists"
+          >
+            Playlists
+          </Link>
+          <Link
+            className={`font-semibold text-sm/6 text-gray-900 ${pathname === '/schedule' ? 'border-b-2 border-black' : ''}`}
+            href="/schedule"
+          >
+            Schedule
+          </Link>
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {session ? (
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center space-x-2 text-sm/6 font-semibold text-gray-900"
+                className="flex items-center space-x-2 text-sm/6 font-semibold text-green-400"
               >
                 <span>Welcome, {session.user?.spotifyId}</span>
-                <span className="text-gray-500">▼</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-4 h-4 text-green-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
               </button>
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-24 bg-white border border-gray-300 z-10">

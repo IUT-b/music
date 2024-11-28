@@ -1,6 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Select from '../components/Select';
+import Input from '../components/Input';
+import Button from '../components/Button';
+import { formatDate } from '@/lib/date';
 
 type Playlist = {
   id: string;
@@ -15,12 +19,13 @@ type Device = {
 };
 
 export default function SchedulePage() {
-  const [devices, setDevices] = useState<Device[]>([]);               // 登録済の全デバイス
-  const [scheduledDevice, setScheduledDevice] = useState('');         // スケジュール再生するデバイス
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);         // 登録済の全プレイリスト
-  const [scheduledPlaylist, setScheduledPlaylist] = useState('');     // スケジュール再生するプレイリスト
+  const [devices, setDevices] = useState<Device[]>([]);                       // 登録済の全デバイス
+  const [scheduledDevice, setScheduledDevice] = useState('');                 // スケジュール再生するデバイス
+  // const [scheduledDevice, setScheduledDevice] = useState<{ id: string; name: string } | null>(null);
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);                 // 登録済の全プレイリスト
+  const [scheduledPlaylist, setScheduledPlaylist] = useState('');             // スケジュール再生するプレイリスト
+  // const [scheduledPlaylist, setScheduledPlaylist] = useState<{ id: string; name: string } | null>(null);
   const [time, setTime] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);        // For success message
   const [schedules, setSchedules] = useState<any[]>([]);              // State for fetching schedules
@@ -65,6 +70,13 @@ export default function SchedulePage() {
   };
 
 
+  // const handleDeviceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const selectedId = e.target.value;
+  //   const selectedDevice = devices.find((device) => device.id === selectedId);
+  //   setScheduledDevice(selectedDevice || null);
+  // };
+
+
   // スケジュールをデータベースへ保存
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -74,7 +86,6 @@ export default function SchedulePage() {
       return;
     }
 
-    setIsLoading(true);
     setError(null);
     setMessage(null);
 
@@ -102,7 +113,6 @@ export default function SchedulePage() {
       setScheduledDevice('');
       setScheduledPlaylist('');
       setTime('');
-      setMessage('Schedule saved successfully!');
 
       // NOTE: 実行した時点で他のユーザー含めて全てのスケジュールを取得し、それに従って再生する。個別のユーザーのスケジュールのみでもよいか
       // この後登録したスケジュールを再生するには再度実行する必要がある
@@ -110,80 +120,93 @@ export default function SchedulePage() {
       initializeSchedules();
     } catch (error) {
       setError(error.message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   return (
-    <div>
-      <h1>Schedule Playlist</h1>
-      <div>creating initialize button api/schedule/initialize</div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="device">デバイス</label>
-          <select
-            id="device"
-            name="device"
-            value={scheduledDevice}
-            onChange={(e) => setScheduledDevice(e.target.value)}
-            required
-          >
-            <option>Select a device</option>
-            {devices.map((device) => (
-              <option key={device.id} value={device.id}>
-                {device.name}
-              </option>
+    <div className="flex justify-between">
+      <div className="w-2/3 pr-6">
+        <h2>Your Scheduled Playlists</h2>
+        <table className="min-w-full table-auto text-left text-sm text-gray-500 dark:text-gray-400">
+          <thead className="bg-gray-50 dark:bg-gray-700">
+            <tr>
+              <th scope="col" className="px-6 py-3 font-medium text-gray-900 dark:text-white">Date</th>
+              <th scope="col" className="px-6 py-3 font-medium text-gray-900 dark:text-white">Playlist</th>
+              <th scope="col" className="px-6 py-3 font-medium text-gray-900 dark:text-white">Device</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white dark:bg-gray-800">
+            {schedules.map((schedule, index) => (
+              <tr className="border-b border-gray-200 dark:border-gray-600" key={index}>
+                <td className="px-6 py-4">{formatDate(schedule.time)}</td>
+                <td className="px-6 py-4">{schedule.playlistId}</td>
+                <td className="px-6 py-4">{schedule.deviceId}</td>
+              </tr>
             ))}
-          </select>
-        </div>
+          </tbody>
+        </table>
+      </div>
 
-        <div>
-          <label htmlFor="playlist">プレイリスト</label>
-          <select
-            id="playlist"
-            name="playlist"
-            value={scheduledPlaylist}
-            onChange={(e) => setScheduledPlaylist(e.target.value)}
-            required
-          >
-            <option>Select a playlist</option>
-            {playlists.map((playlist) => (
-              <option key={playlist.id} value={playlist.id}>
-                {playlist.name}
-              </option>
-            ))}
-          </select>
-        </div>
+      {/* 入力フォームを右側に配置 */}
+      <div className="w-1/3">
+        <h1>Schedule Playlist</h1>
+        <form onSubmit={handleSubmit} className="max-w-lg p-6 rounded-lg">
+          {/* デバイス選択 */}
+          <div className="mb-4">
+            <label htmlFor="device" className="block text-gray-700 text-sm font-bold mb-2">Device</label>
+            <Select
+              id="device"
+              options={[
+                { value: '', label: 'Select a device' },
+                ...devices.map((device) => ({
+                  value: device.id,
+                  label: device.name,
+                })),
+              ]}
+              value={scheduledDevice}
+              onChange={setScheduledDevice}
+            />
+          </div>
 
-        <div>
-          <label htmlFor="time">時間</label>
-          <input
-            type="datetime-local"
-            id="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
-            required
-          />
-        </div>
+          {/* プレイリスト選択 */}
+          <div className="mb-4">
+            <label htmlFor="playlist" className="block text-gray-700 text-sm font-bold mb-2">Playlist</label>
+            <Select
+              id="playlist"
+              options={[
+                { value: '', label: 'Select a playlist' },
+                ...playlists.map((playlist) => ({
+                  value: playlist.id,
+                  label: playlist.name,
+                })),
+              ]}
+              value={scheduledPlaylist}
+              onChange={setScheduledPlaylist}
+            />
+          </div>
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {message && <p style={{ color: 'green' }}>{message}</p>}
+          {/* 時間選択 */}
+          <div className="mb-4">
+            <label htmlFor="time" className="block text-gray-700 text-sm font-bold mb-2">Time</label>
+            <Input
+              type="datetime-local"
+              id="time"
+              value={time}
+              onChange={setTime}
+              required
+            />
+          </div>
 
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Saving...' : 'スケジュール保存'}
-        </button>
-      </form>
+          {/* エラーメッセージと成功メッセージ */}
+          <div className="mb-4">
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {message && <p className="text-green-500 text-sm">{message}</p>}
+          </div>
 
-      <h2>Your Scheduled Playlists</h2>
-      <ul>
-        {schedules.map((schedule) => (
-          <li key={schedule.id}>
-            Playlist: {schedule.playlistId}, Device: {schedule.deviceId}, Time:{' '}
-            {new Date(schedule.time).toLocaleString()}
-          </li>
-        ))}
-      </ul>
+          {/* ボタン */}
+          <Button type="submit" label="スケジュール保存" />
+        </form>
+      </div>
     </div>
   );
 };

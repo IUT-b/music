@@ -1,9 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { getSavedTracks } from "@/lib/spotify";
-import { getDateInJST } from "@/lib/date";
 
 export async function syncFavoritesWithSpotify(token: string, userSpotifyId: string) {
-  // TODO: 同じ曲が取得されることがある？２０曲しか取得できない？
   const savedTracks = await getSavedTracks(token);
 
   // Spotifyのお気に入りに存在する曲をデータベースで確認

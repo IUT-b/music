@@ -18,6 +18,7 @@ const scopes = [
   "user-read-currently-playing",
   "user-modify-playback-state",
   "user-library-read",
+  "user-library-modify",
 ].join(" ");
 
 // NextAuthの設定
