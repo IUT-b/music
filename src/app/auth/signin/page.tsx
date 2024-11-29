@@ -3,7 +3,6 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-// import SignInButton from "../../components/SignInButton";
 
 export default function SignIn() {
   const { status } = useSession();
@@ -18,7 +17,6 @@ export default function SignIn() {
   return (
     <div>
       <h1>Sign In with Spotify</h1>
-      {/* <SignInButton /> */}
     </div>
   );
 };

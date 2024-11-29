@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { getUserData, getTopTracks, getPlaylists, getPlaylistTracks, getDevices, getSavedTracks } from '../../../lib/spotify';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
-import { syncFavoritesWithSpotify } from "@/lib/syncFavorites";
+import { getAccessToken } from '@/lib/auth';
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
@@ -18,69 +18,44 @@ export async function GET(req: Request) {
   const offset = parseInt(url.searchParams.get('offset') || '0', 0);
 
   try {
-    // const user = await getUserData(session.accessToken); // Note: NextAuthの認証後にsession.userにも同様のデータが格納されている
-    // const topTracksIn4Weeks = await getTopTracks(session.accessToken, 'short_term', limit);
-    // const topTracksIn6Months = await getTopTracks(session.accessToken, 'medium_term', limit);
-    // const topTracksInAllTime = await getTopTracks(session.accessToken, 'long_term', limit);
-    // const playlists = await getPlaylists(session.accessToken, limit, offset);
-    // const devices = await getDevices(session.accessToken);
-    // const savedTracks = await getSavedTracks(session.accessToken);
-
-    // // プレイリスト内の曲を取得
-    // const playlistsWithTracks = await Promise.all(playlists.map(async (playlist) => {
-    //   const tracks = await getPlaylistTracks(session.accessToken, playlist.id, limit);
-    //   return { ...playlist, tracks };
-    // }));
-
-    // await syncFavoritesWithSpotify(session.accessToken, session.user.spotifyId); // NOTE: サーバーサイドで実行する
-
-    // return NextResponse.json({
-    //   user,
-    //   topTracksIn4Weeks,
-    //   topTracksIn6Months,
-    //   topTracksInAllTime,
-    //   playlists: playlistsWithTracks,
-    //   devices,
-    //   savedTracks,
-    // });
-
-
+    // アクセストークンを更新
+    const accessToken = await getAccessToken(session.user.spotifyId);
 
     // dataType によって返すデータを制御
     const responseData: any = {};
 
     if (!dataType || dataType === 'user') {
-      const user = await getUserData(session.accessToken); // Note: NextAuthの認証後にsession.userにも同様のデータが格納されている
+      const user = await getUserData(accessToken); // Note: NextAuthの認証後にsession.userにも同様のデータが格納されている
 
       responseData.user = user;
     }
     if (!dataType || dataType === 'topTracks') {
-      const topTracksIn4Weeks = await getTopTracks(session.accessToken, 'short_term', limit);
-      const topTracksIn6Months = await getTopTracks(session.accessToken, 'medium_term', limit);
-      const topTracksInAllTime = await getTopTracks(session.accessToken, 'long_term', limit);
+      const topTracksIn4Weeks = await getTopTracks(accessToken, 'short_term', limit);
+      const topTracksIn6Months = await getTopTracks(accessToken, 'medium_term', limit);
+      const topTracksInAllTime = await getTopTracks(accessToken, 'long_term', limit);
 
       responseData.topTracksIn4Weeks = topTracksIn4Weeks;
       responseData.topTracksIn6Months = topTracksIn6Months;
       responseData.topTracksInAllTime = topTracksInAllTime;
     }
     if (!dataType || dataType === 'playlists') {
-      const playlists = await getPlaylists(session.accessToken, limit, offset);
+      const playlists = await getPlaylists(accessToken, limit, offset);
 
       // プレイリスト内の曲を取得
       const playlistsWithTracks = await Promise.all(playlists.map(async (playlist) => {
-        const tracks = await getPlaylistTracks(session.accessToken, playlist.id, limit);
+        const tracks = await getPlaylistTracks(accessToken, playlist.id, limit);
         return { ...playlist, tracks };
       }));
 
       responseData.playlists = playlistsWithTracks;
     }
     if (!dataType || dataType === 'devices') {
-      const devices = await getDevices(session.accessToken);
+      const devices = await getDevices(accessToken);
 
       responseData.devices = devices;
     }
     if (!dataType || dataType === 'savedTracks') {
-      const savedTracks = await getSavedTracks(session.accessToken);
+      const savedTracks = await getSavedTracks(accessToken);
 
       responseData.savedTracks = savedTracks;
     }

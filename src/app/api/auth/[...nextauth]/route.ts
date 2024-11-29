@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
 import { PrismaClient } from "@prisma/client";
-import { refreshAccessToken } from "@/lib/spotify";
 
 const prisma = new PrismaClient();
 
@@ -31,22 +30,7 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    // NOTE: jwtの後に実行される
-    async session({ session, token }) {
-      if (token.spotifyId) {
-        // NOTE: userにはNexAuthがデフォルトで提供するプロパティ(name, email, image等)が含まれる
-        session.user.spotifyId = token.spotifyId; 
-      }
-      if (token.accessToken) {
-        session.accessToken = token.accessToken;
-      }
-      if (token.refreshToken) {
-        session.refreshToken = token.refreshToken;
-      }
-      return session;
-    },
-    // NOTE: jwtが最初に実行される
-    // userはspotify側で自動で設定される(user.idはSpotifyのIDが設定される)
+    // NOTE: userはspotify側で自動で設定される(user.idはSpotifyのIDが設定される)
     async jwt({ token, account, user }) {
       if (account && account.provider === "spotify") {
         console.log('token:', token);
@@ -73,16 +57,20 @@ export const authOptions = {
         }
       }
 
-      // TODO: 作動しているか要確認、認証切れが発生した
-      // トークンが期限切れの場合にリフレッシュ
-      if (Date.now() > token.accessTokenExpires) {
-        const refreshedToken = await refreshAccessToken(token.refreshToken);
-        token.accessToken = refreshedToken.access_token;
-        token.accessTokenExpires = Date.now() + refreshedToken.expires_in * 1000;
-        token.refreshToken = refreshedToken.refresh_token ?? token.refreshToken;
-      }
-
       return token;
+    },
+    async session({ session, token }) {
+      if (token.spotifyId) {
+        // NOTE: userにはNexAuthがデフォルトで提供するプロパティ(name, email, image等)が含まれる
+        session.user.spotifyId = token.spotifyId;
+      }
+      if (token.accessToken) {
+        session.accessToken = token.accessToken;
+      }
+      if (token.refreshToken) {
+        session.refreshToken = token.refreshToken;
+      }
+      return session;
     },
   },
   pages: {

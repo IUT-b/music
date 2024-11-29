@@ -37,7 +37,6 @@ export default function InsightsPage() {
         console.error("Error fetching access token:", error);
       }
     };
-
     fetchAccessToken();
 
     // トップトラックを取得
@@ -113,6 +112,7 @@ export default function InsightsPage() {
     syncFavoritesWithSpotify();
   }, []);
 
+  // spotifyId取得後に実施
   useEffect(() => {
     // プレイリストを取得
     const fetchPlaylists = async () => {
@@ -139,19 +139,7 @@ export default function InsightsPage() {
     };
 
     fetchPlaylists();
-  }, [spotifyId]); // NOTE: spotifyIdを取得後に実施
-
-  // お気に入りを追加・削除する関数
-  const handleSaveTrack = (track: Track) => {
-    setSavedTracks((prevTracks) => {
-      // 既に保存されているトラックなら削除
-      if (prevTracks.some((savedTrack) => savedTrack.id === track.id)) {
-        return prevTracks.filter((savedTrack) => savedTrack.id !== track.id);
-      }
-      // 保存されていない場合は追加
-      return [...prevTracks, track];
-    });
-  };
+  }, [spotifyId]);
 
   if (tracksIn4Weeks.length === 0 || tracksIn6Months.length === 0 || tracksInAllTime.length === 0) {
     return <div>Loading...</div>;

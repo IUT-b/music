@@ -35,7 +35,6 @@ export default function PlaylistsPage() {
         console.error("Error fetching access token:", error);
       }
     };
-
     fetchAccessToken();
 
     // プレイリストを取得
@@ -53,7 +52,6 @@ export default function PlaylistsPage() {
         console.error('Error fetching top tracks:', error);
       }
     };
-
     fetchPlaylists();
 
     // 登録済のお気に入りを取得
@@ -71,7 +69,6 @@ export default function PlaylistsPage() {
         console.error('Error fetching favorites:', error);
       }
     };
-
     fetchSavedTracks();
   }, []);
 

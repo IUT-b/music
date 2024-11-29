@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route';
-import { getAccessToken } from '@/lib/auth';  // 既存のアクセストークン取得関数をインポート
+import { getAccessToken } from '@/lib/auth';
 
 export async function GET() {
   const session = await getServerSession(authOptions);

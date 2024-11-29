@@ -2,29 +2,6 @@ import SpotifyWebApi from 'spotify-web-api-node';
 
 const spotifyApi = new SpotifyWebApi();
 
-// Spotifyのaccess tokenを設定
-export function setAccessToken(accessToken: string) {
-  spotifyApi.setAccessToken(accessToken);
-}
-
-// Spotifyのrefresh tokenを設定
-export function setRefreshToken(refreshToken: string) {
-  spotifyApi.setRefreshToken(refreshToken);
-}
-
-// Spotifyのaccess tokenを更新
-export async function refreshAccessToken(refreshToken: string) {
-  try {
-    const data = await spotifyApi.refreshAccessToken(refreshToken);
-    const newAccessToken = data.body["access_token"];
-    spotifyApi.setAccessToken(newAccessToken);
-    return newAccessToken;
-  } catch (error) {
-    console.error("Error refreshing access token", error);
-    throw error;
-  }
-}
-
 // Spotifyのuserデータを取得
 export async function getUserData(token: string) {
   spotifyApi.setAccessToken(token);

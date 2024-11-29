@@ -40,7 +40,6 @@ export default function SchedulePage() {
         console.error('Error fetching schedules:', error);
       }
     };
-
     fetchSchedules();
   }, []);
 

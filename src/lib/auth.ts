@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 
 /**
  * Spotifyのアクセストークンを取得する関数
- * @param userSpotifyId - スケジュールのユーザーのSpotify ID
+ * @param spotifyId - スケジュールのユーザーのSpotify ID
  * @returns アクセストークン
  */
 export async function getAccessToken(spotifyId: string): Promise<string | null> {
@@ -56,3 +56,26 @@ export async function getAccessToken(spotifyId: string): Promise<string | null> 
     return null;
   }
 }
+
+// Spotifyのaccess tokenを設定
+// export function setAccessToken(accessToken: string) {
+//   spotifyApi.setAccessToken(accessToken);
+// }
+
+// Spotifyのrefresh tokenを設定
+// export function setRefreshToken(refreshToken: string) {
+//   spotifyApi.setRefreshToken(refreshToken);
+// }
+
+// Spotifyのaccess tokenを更新
+// export async function refreshAccessToken(refreshToken: string) {
+//   try {
+//     const data = await spotifyApi.refreshAccessToken(refreshToken);
+//     const newAccessToken = data.body["access_token"];
+//     spotifyApi.setAccessToken(newAccessToken);
+//     return newAccessToken;
+//   } catch (error) {
+//     console.error("Error refreshing access token", error);
+//     throw error;
+//   }
+// }
