@@ -17,7 +17,7 @@ export default function Sidebar() {
   const [message, setMessage] = useState<string | null>(null);        // For success message
 
 
-  // const [activeItem, setActiveItem] = useRecoilState(activeItemState);
+  const [activeItem, setActiveItem] = useRecoilState(activeItemState);
   console.log('activeItem:', activeItemState);
   useEffect(() => {
     // アクセストークンを取得
