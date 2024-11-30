@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from "recoil";
-import { activeItemState } from "../state/state";
+import { selectedPlaylistState } from "../state/state";
 import { Track, Playlist } from '@/types/spotify';
 
 export default function Sidebar() {
@@ -12,13 +12,11 @@ export default function Sidebar() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isPublic, setIsPublic] = useState();
-  const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);        // For success message
 
+  const [selectedPlaylist, setSelectedPlaylist] = useRecoilState(selectedPlaylistState);
 
-  const [activeItem, setActiveItem] = useRecoilState(activeItemState);
-  console.log('activeItem:', activeItemState);
   useEffect(() => {
     // アクセストークンを取得
     const fetchAccessToken = async () => {
@@ -77,7 +75,6 @@ export default function Sidebar() {
   // プレイリストを選択
   const handlePlaylistSelect = (playlist: Playlist) => {
     setSelectedPlaylist(playlist);
-    // setActiveItem(playlist);
   };
 
 

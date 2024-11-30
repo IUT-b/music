@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// import { useRecoilValue } from "recoil";
-// import { activeItemState } from "../state/state";
+import { useRecoilValue } from "recoil";
+import { selectedPlaylistState } from "../state/state";
 import { createPlaylist } from '@/lib/spotify';
 import { Track, Playlist } from '@/types/spotify';
 import Button from '../components/Button';
@@ -17,11 +17,10 @@ export default function PlaylistsPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isPublic, setIsPublic] = useState();
-  const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);        // For success message
 
-  // const activeItem = useRecoilValue(activeItemState);
+  const selectedPlaylist = useRecoilValue(selectedPlaylistState);
 
   useEffect(() => {
     // アクセストークンを取得
@@ -99,12 +98,6 @@ export default function PlaylistsPage() {
     }
   };
 
-  // プレイリストを選択
-  const handlePlaylistSelect = (playlist: Playlist) => {
-    setSelectedPlaylist(playlist);
-  };
-
-
   if (playlists.length === 0) {
     return <div>Loading...</div>;
   }
@@ -112,23 +105,6 @@ export default function PlaylistsPage() {
   return (
     <div>
       <div className="flex">
-        {/* 左側にプレイリスト一覧を表示 */}
-        <div className="w-1/4 p-4 bg-gray-100">
-          <h1>プレイリスト</h1>
-          <ul>
-            {playlists.map((playlist, index) => (
-              // <li key={index} className="mb-4 cursor-pointer" onClick={() => handlePlaylistSelect(playlist)}>
-              //   <img src={playlist.imageUrl} alt={playlist.name} width={50} height={50} />
-              //   <span>{playlist.name}</span>
-              // </li>
-              <div key={index} className="flex items-center mb-4 cursor-pointer" onClick={() => handlePlaylistSelect(playlist)}>
-                <img src={playlist.imageUrl} alt={playlist.name} width={50} height={50} />
-                <span className='px-2 truncate'>{playlist.name}</span>
-              </div>
-            ))}
-          </ul>
-        </div>
-
         {/* 右側に選択されたプレイリストの曲を表示 */}
         <div className="w-3/4 p-4">
           {selectedPlaylist ? (
@@ -136,20 +112,17 @@ export default function PlaylistsPage() {
             <div>
               <div className="flex items-center justify-center">
                 <img src={selectedPlaylist.imageUrl} alt={selectedPlaylist.name} width={200} height={200} />
-                {/* <img src={activeItem.imageUrl} alt={activeItem.name} width={200} height={200} /> */}
                 <span className="px-2 text-5xl font-bold">{selectedPlaylist.name}</span>
               </div>
               <TrackTable
                 accessToken={accessToken}
                 title={selectedPlaylist.name}
-                // title={activeItem.name}
                 tracks={selectedPlaylist.tracks}
-                // tracks={activeItem.tracks}
                 savedTracks={savedTracks}
                 playlists={playlists}
                 isShowingPlaylist={true}
                 showingPlaylist={selectedPlaylist}
-              // showingPlaylist={activeItem}
+                setSavedTracks={setSavedTracks}
               />
             </div>
           ) : (

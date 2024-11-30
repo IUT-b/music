@@ -1,7 +1,7 @@
 import { atom } from "recoil";
-import { Track, Playlist } from "@/types/spotify"
+import { Playlist } from "@/types/spotify"
 
-export const activeItemState = atom<Playlist | null>({
-    key: "activeItemState",
+export const selectedPlaylistState = atom<Playlist | null>({
+    key: "selectedPlaylistState",
     default: null,
 });
