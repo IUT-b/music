@@ -1,32 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from "recoil";
-import { selectedPlaylistState, createPlaylistModeState } from "../state/state";
-import { Track, Playlist } from '@/types/spotify';
+import { selectedViewState } from "../state/state";
 
 export default function Sidebar() {
-  const [selectedPlaylist, setSelectedPlaylist] = useRecoilState(selectedPlaylistState);
-  const [createPlaylistMode, setCreatePlaylistMode] = useRecoilState(createPlaylistModeState);
-
-  // プレイリストを選択
-  const handlePlaylistSelect = (playlist: Playlist) => {
-    setSelectedPlaylist(playlist);
-    setCreatePlaylistMode(false);
-  };
-
-  const handleNewPlaylistClick = () => {
-    setCreatePlaylistMode(true);
-  };
+  const [selectedView, setselectedView] = useRecoilState(selectedViewState);
 
   return (
     <div>
       <div className="flex">
         <div className="p-4">
-          <div>Top Tracks in 4 Weeks</div>
-          <div>Top Tracks in 6 Months</div>
-          <div>Top Tracks of All Time</div>
-          <div>お気に入り</div>
+          <div className="cursor-pointer" onClick={() => setselectedView("Top Tracks in 4 Weeks")}>Top Tracks in 4 Weeks</div>
+          <div className="cursor-pointer" onClick={() => setselectedView("Top Tracks in 6 Months")}>Top Tracks in 6 Months</div>
+          <div className="cursor-pointer" onClick={() => setselectedView("Top Tracks of All Time")}>Top Tracks of All Time</div>
+          <div className="cursor-pointer" onClick={() => setselectedView("Favorites")}>お気に入り</div>
         </div>
       </div>
       <style jsx>{`

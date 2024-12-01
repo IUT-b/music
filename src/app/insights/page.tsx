@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRecoilValue } from "recoil";
+import { selectedViewState, createViewState } from "../state/state";
 import { Track, Playlist } from '@/types/spotify';
 import SharedLayout from "../components/SharedLayout";
 import Sidebar from "./Sidebar";
@@ -16,6 +18,8 @@ export default function InsightsPage() {
   const [tracksInAllTime, setTracksInAllTime] = useState<Track[]>([]);
   const [favorites, setFavorites] = useState<Track[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+
+  const selectedView = useRecoilValue(selectedViewState);
 
   useEffect(() => {
     const spotifyData = sessionStorage.getItem('spotifyData');
@@ -150,47 +154,53 @@ export default function InsightsPage() {
   return (
     <SharedLayout SidebarComponent={Sidebar}>
       <div>
-        <TrackTable
-          accessToken={accessToken}
-          title='Top Tracks in 4 Weeks'
-          tracks={tracksIn4Weeks}
-          savedTracks={savedTracks}
-          playlists={playlists}
-          isShowingPlaylist={false}
-          showingPlaylist={{}}
-          setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
-        />
-        <TrackTable
-          accessToken={accessToken}
-          title='Top Tracks in 6 Months'
-          tracks={tracksIn6Months}
-          savedTracks={savedTracks}
-          playlists={playlists}
-          isShowingPlaylist={false}
-          showingPlaylist={{}}
-          setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
-        />
-        <TrackTable
-          accessToken={accessToken}
-          title='Top Tracks of All Time'
-          tracks={tracksInAllTime}
-          savedTracks={savedTracks}
-          playlists={playlists}
-          isShowingPlaylist={false}
-          showingPlaylist={{}}
-          setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
-        />
-        <TrackTable
-          accessToken={accessToken}
-          title='お気に入り'
-          tracks={savedTracks}
-          savedTracks={savedTracks}
-          playlists={playlists}
-          isShowingPlaylist={false}
-          showingPlaylist={{}}
-          setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
-        />
-        <TimelineChart favorites={favorites} />
+        {selectedView === "Top Tracks in 4 Weeks" && (
+          <TrackTable
+            accessToken={accessToken}
+            title='Top Tracks in 4 Weeks'
+            tracks={tracksIn4Weeks}
+            savedTracks={savedTracks}
+            playlists={playlists}
+            isShowingPlaylist={false}
+            showingPlaylist={{}}
+            setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
+          />)}
+        {selectedView === "Top Tracks in 6 Months" && (
+          <TrackTable
+            accessToken={accessToken}
+            title='Top Tracks in 6 Months'
+            tracks={tracksIn6Months}
+            savedTracks={savedTracks}
+            playlists={playlists}
+            isShowingPlaylist={false}
+            showingPlaylist={{}}
+            setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
+          />)}
+        {selectedView === "Top Tracks of All Time" && (
+          <TrackTable
+            accessToken={accessToken}
+            title='Top Tracks of All Time'
+            tracks={tracksInAllTime}
+            savedTracks={savedTracks}
+            playlists={playlists}
+            isShowingPlaylist={false}
+            showingPlaylist={{}}
+            setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
+          />)}
+        {selectedView === "Favorites" && (
+          <div>
+            <TrackTable
+              accessToken={accessToken}
+              title='お気に入り'
+              tracks={savedTracks}
+              savedTracks={savedTracks}
+              playlists={playlists}
+              isShowingPlaylist={false}
+              showingPlaylist={{}}
+              setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
+            />
+            <TimelineChart favorites={favorites} />
+          </div>)}
       </div>
     </SharedLayout>
   );
