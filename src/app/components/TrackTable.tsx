@@ -18,21 +18,21 @@ interface Props {
 
 const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShowingPlaylist, showingPlaylist, setSavedTracks }: Props) => (
   <div className="mt-6">
-    <div className="playlist">
+    <div className="w-full mx-auto p-5">
       <h2>{title}</h2>
       <table className="min-w-full table-auto text-left text-sm text-gray-500">
         <thead>
           <tr className="border-b">
-            <th scope="col" className="px-6 py-3 font-medium text-gray-900 w-4">#</th>
-            <th scope="col" className="px-6 py-3 font-medium text-gray-900"></th>
-            <th scope="col" className="px-6 py-3 font-medium text-gray-900">タイトル</th>
-            <th scope="col" className="px-6 py-3 font-medium text-gray-900">アルバム</th>
-            <th scope="col" className="px-6 py-3 font-medium text-gray-900"></th>
-            <th scope="col" className="px-6 py-3 font-medium text-gray-900"></th>
-            <th scope="col" className="px-6 py-3 font-medium text-gray-900"></th>
+            <th scope="col" className="px-6 py-3 font-medium w-4">#</th>
+            <th scope="col" className="px-6 py-3 font-medium"></th>
+            <th scope="col" className="px-6 py-3 font-medium">タイトル</th>
+            <th scope="col" className="px-6 py-3 font-medium">アルバム</th>
+            <th scope="col" className="px-6 py-3 font-medium"></th>
+            <th scope="col" className="px-6 py-3 font-medium"></th>
+            <th scope="col" className="px-6 py-3 font-medium"></th>
           </tr>
         </thead>
-        <tbody className="bg-white">
+        <tbody>
           {tracks.map((track, index) => {
             // トラックが保存されているかどうかを判定
             const isTrackSaved = savedTracks.some(savedTrack => savedTrack.id === track.id);
@@ -47,16 +47,16 @@ const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShow
                 </td>
                 <td>
                   <a href={track.trackUrl} target="_blank" rel="noopener noreferrer">
-                    <p className="text-gray-600 font-semibold truncate" title={track.name}>{track.name}</p>
+                    <p className="text-white font-semibold truncate" title={track.name}>{track.name}</p>
                   </a>
-                  <p className="text-gray-600 text-sm truncate" title={track.artist}>{track.artist}</p>
+                  <p className="text-sm truncate" title={track.artist}>{track.artist}</p>
                 </td>
                 <td>
-                  <p className="text-gray-600 truncate" title={track.album}>{track.album}</p>
+                  <p className="truncate" title={track.album}>{track.album}</p>
                 </td>
                 <td>
                   {track.popularity && (
-                    <span className="flex items-center text-gray-600 text-sm px-1" title="人気度">
+                    <span className="flex items-center text-sm px-1" title="人気度">
                       {track.popularity}
                     </span>
                   )}
@@ -111,20 +111,6 @@ const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShow
       </table>
     </div>
     <style jsx>{`
-      .playlist {
-        width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-      }
-
-      .album-art {
-        width: 50px;
-        height: 50px;
-        border-radius: 5px;
-        margin-right: 10px;
-      }
-
       .truncate {
         white-space: nowrap;
         overflow: hidden;

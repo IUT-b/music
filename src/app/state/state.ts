@@ -5,3 +5,8 @@ export const selectedPlaylistState = atom<Playlist | null>({
     key: "selectedPlaylistState",
     default: null,
 });
+
+export const createPlaylistModeState = atom<boolean>({
+    key: "createPlaylistModeState",
+    default: false,
+});

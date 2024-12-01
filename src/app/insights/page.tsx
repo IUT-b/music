@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Track, Playlist } from '@/types/spotify';
+import SharedLayout from "../components/SharedLayout";
+import Sidebar from "./Sidebar";
 import TrackTable from '../components/TrackTable';
 import TimelineChart from "../components/TimelineChart";
 
@@ -146,49 +148,50 @@ export default function InsightsPage() {
   }
 
   return (
-    <div>
-      <h1>Spotify Top Tracks</h1>
-      <TrackTable
-        accessToken={accessToken}
-        title='Top Tracks in 4 Weeks'
-        tracks={tracksIn4Weeks}
-        savedTracks={savedTracks}
-        playlists={playlists}
-        isShowingPlaylist={false}
-        showingPlaylist={{}}
-        setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
-      />
-      <TrackTable
-        accessToken={accessToken}
-        title='Top Tracks in 6 Months'
-        tracks={tracksIn6Months}
-        savedTracks={savedTracks}
-        playlists={playlists}
-        isShowingPlaylist={false}
-        showingPlaylist={{}}
-        setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
-      />
-      <TrackTable
-        accessToken={accessToken}
-        title='Top Tracks of All Time'
-        tracks={tracksInAllTime}
-        savedTracks={savedTracks}
-        playlists={playlists}
-        isShowingPlaylist={false}
-        showingPlaylist={{}}
-        setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
-      />
-      <TrackTable
-        accessToken={accessToken}
-        title='お気に入り'
-        tracks={savedTracks}
-        savedTracks={savedTracks}
-        playlists={playlists}
-        isShowingPlaylist={false}
-        showingPlaylist={{}}
-        setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
-      />
-      <TimelineChart favorites={favorites} />
-    </div>
+    <SharedLayout SidebarComponent={Sidebar}>
+      <div>
+        <TrackTable
+          accessToken={accessToken}
+          title='Top Tracks in 4 Weeks'
+          tracks={tracksIn4Weeks}
+          savedTracks={savedTracks}
+          playlists={playlists}
+          isShowingPlaylist={false}
+          showingPlaylist={{}}
+          setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
+        />
+        <TrackTable
+          accessToken={accessToken}
+          title='Top Tracks in 6 Months'
+          tracks={tracksIn6Months}
+          savedTracks={savedTracks}
+          playlists={playlists}
+          isShowingPlaylist={false}
+          showingPlaylist={{}}
+          setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
+        />
+        <TrackTable
+          accessToken={accessToken}
+          title='Top Tracks of All Time'
+          tracks={tracksInAllTime}
+          savedTracks={savedTracks}
+          playlists={playlists}
+          isShowingPlaylist={false}
+          showingPlaylist={{}}
+          setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
+        />
+        <TrackTable
+          accessToken={accessToken}
+          title='お気に入り'
+          tracks={savedTracks}
+          savedTracks={savedTracks}
+          playlists={playlists}
+          isShowingPlaylist={false}
+          showingPlaylist={{}}
+          setSavedTracks={setSavedTracks}  // setSavedTracks を渡す
+        />
+        <TimelineChart favorites={favorites} />
+      </div>
+    </SharedLayout>
   );
 };

@@ -17,7 +17,7 @@ export default function Input({ type, id, value, onChange, required }: DateTimeS
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className="block appearance-none w-full bg-white text-green-400 border border-green-400 px-4 py-2 pr-8 leading-tight focus:outline-none focus:shadow-outline"
+        className="block appearance-none w-full bg-white text-green-400 px-4 py-2 pr-8 leading-tight focus:outline-none focus:shadow-outline"
       />
     </div>
   );

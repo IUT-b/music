@@ -160,7 +160,7 @@ export default function MenuButton({ accessToken, selectedTrack, playlists, isSh
       {isMenuOpen && (
         <div
           ref={menuRef}
-          className="absolute left-0 top-full mt-1 w-48 bg-white border border-gray-300 shadow-lg rounded-md z-50"
+          className="absolute right-0 top-full mt-1 w-48 bg-white border border-gray-300 shadow-lg rounded-md z-50"
         >
           <ul>
             <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={openModal}>プレイリストに追加</li>

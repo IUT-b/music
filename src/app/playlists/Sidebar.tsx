@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from "recoil";
-import { selectedPlaylistState } from "../state/state";
+import { selectedPlaylistState, createPlaylistModeState } from "../state/state";
 import { Track, Playlist } from '@/types/spotify';
 
 export default function Sidebar() {
@@ -16,6 +16,7 @@ export default function Sidebar() {
   const [message, setMessage] = useState<string | null>(null);        // For success message
 
   const [selectedPlaylist, setSelectedPlaylist] = useRecoilState(selectedPlaylistState);
+  const [createPlaylistMode, setCreatePlaylistMode] = useRecoilState(createPlaylistModeState);
 
   useEffect(() => {
     // アクセストークンを取得
@@ -70,11 +71,14 @@ export default function Sidebar() {
     fetchSavedTracks();
   }, []);
 
-
-
   // プレイリストを選択
   const handlePlaylistSelect = (playlist: Playlist) => {
     setSelectedPlaylist(playlist);
+    setCreatePlaylistMode(false);
+  };
+
+  const handleNewPlaylistClick = () => {
+    setCreatePlaylistMode(true);
   };
 
 
@@ -89,27 +93,17 @@ export default function Sidebar() {
           <h1>プレイリスト</h1>
           {playlists.map((playlist, index) => (
             <div key={index} className="flex items-center mb-4 cursor-pointer" onClick={() => handlePlaylistSelect(playlist)}>
-              <img src={playlist.imageUrl} alt={playlist.name} width={50} height={50} />
+              <img src={playlist.imageUrl || "/9025653_music_notes_icon.png"} alt={playlist.name} className="album-art" />
               <span className='px-2 truncate'>{playlist.name}</span>
             </div>
           ))}
+          <div className="flex items-center mb-4 cursor-pointer" onClick={() => handleNewPlaylistClick()}>
+            <img src="/9025788_music_notes_plus_icon.png" alt="新規作成" width={50} height={50} />
+            <span className='px-2 truncate'>新規作成</span>
+          </div>
         </div>
       </div>
       <style jsx>{`
-        .playlist {
-          width: 100%;
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 20px;
-        }
-
-        .album-art {
-          width: 50px;
-          height: 50px;
-          border-radius: 5px;
-          margin-right: 10px;
-        }
-
         .truncate {
           white-space: nowrap;
           overflow: hidden;

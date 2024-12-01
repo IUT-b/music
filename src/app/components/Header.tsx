@@ -15,38 +15,38 @@ export default function Example() {
   };
 
   return (
-    <header className="bg-white fixed-header">
+    <header className="fixed-header">
       <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
         <div className="flex lg:flex-1">
           <Link href="/">
             <img
               alt=""
-              src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+              src="\1298766_spotify_music_sound_icon.png"
               className="h-8 w-auto"
             /></Link>
         </div>
 
         <div className="hidden lg:flex lg:gap-x-12">
           <Link
-            className={`font-semibold text-sm/6 text-gray-900 ${pathname === '/insights' ? 'border-b-2 border-black' : ''}`}
+            className={`font-semibold text-sm/6 ${pathname === '/insights' ? 'border-b-2' : ''}`}
             href="/insights"
           >
             Insights
           </Link>
           <Link
-            className={`font-semibold text-sm/6 text-gray-900 ${pathname === '/recommends' ? 'border-b-2 border-black' : ''}`}
+            className={`font-semibold text-sm/6 ${pathname === '/recommends' ? 'border-b-2' : ''}`}
             href="/recommends"
           >
             Recommends
           </Link>
           <Link
-            className={`font-semibold text-sm/6 text-gray-900 ${pathname === '/playlists' ? 'border-b-2 border-black' : ''}`}
+            className={`font-semibold text-sm/6 ${pathname === '/playlists' ? 'border-b-2' : ''}`}
             href="/playlists"
           >
             Playlists
           </Link>
           <Link
-            className={`font-semibold text-sm/6 text-gray-900 ${pathname === '/schedule' ? 'border-b-2 border-black' : ''}`}
+            className={`font-semibold text-sm/6 ${pathname === '/schedule' ? 'border-b-2' : ''}`}
             href="/schedule"
           >
             Schedule
