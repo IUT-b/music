@@ -83,7 +83,7 @@ export default function Example() {
               )}
             </div>
           ) : (
-            <Link onClick={() => signIn("spotify")} className="no-underline text-sm/6 font-semibold text-gray-900" href="/auth/signin">
+            <Link onClick={() => signIn("spotify")} className="no-underline text-sm/6 font-semibold" href="/auth/signin">
               Sign in<span aria-hidden="true">&rarr;</span>
             </Link>
           )}

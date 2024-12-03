@@ -1,9 +1,9 @@
 import { atom } from "recoil";
 import { Playlist } from "@/types/spotify"
 
-export const selectedViewState = atom<"Top Tracks in 4 Weeks" | "Top Tracks in 6 Months" | "Top Tracks of All Time" | "Favorites">({
+export const selectedViewState = atom<"Chart" | "Top Tracks in 4 Weeks" | "Top Tracks in 6 Months" | "Top Tracks of All Time" | "Favorites">({
     key: "selectedViewState",
-    default: "Top Tracks in 4 Weeks",
+    default: "Chart",
 });
 
 export const selectedPlaylistState = atom<Playlist | null>({

@@ -91,7 +91,6 @@ export default function PlaylistsPage() {
           name: newPlaylist.name,
           description: newPlaylist.description,
           imageUrl: newPlaylist.images[0]?.url || null,
-          // imageUrl: newPlaylist.images[0]?.url || '/default-playlist-image.png',
           tracks: [], // 初期では曲なし
         },
         ...prev, // 既存のプレイリストを追加
