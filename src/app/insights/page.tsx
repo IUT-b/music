@@ -5,8 +5,6 @@ import { useRecoilValue } from "recoil";
 import * as echarts from 'echarts';
 import { selectedViewState } from "../state/state";
 import { Track, Playlist } from '@/types/spotify';
-import SharedLayout from "../components/SharedLayout";
-import Sidebar from "./Sidebar";
 import TrackTable from '../components/TrackTable';
 
 export default function InsightsPage() {
@@ -327,17 +325,38 @@ export default function InsightsPage() {
   );
 
   return (
-    <SharedLayout SidebarComponent={Sidebar}>
-      <div>
-        <div>
-          {selectedView === "Top Tracks in 4 Weeks" && renderTrackTable("Top Tracks in 4 Weeks", tracksIn4Weeks)}
-          {selectedView === "Top Tracks in 6 Months" && renderTrackTable("Top Tracks in 6 Months", tracksIn6Months)}
-          {selectedView === "Top Tracks of All Time" && renderTrackTable("Top Tracks of All Time", tracksInAllTime)}
-          {selectedView === "Chart" && (
-            <div ref={chartRef} style={{ width: '100%', height: '1200px' }} />
-          )}
-        </div>
-      </div>
-    </SharedLayout>
+    <div className="px-12">
+      <div ref={chartRef} style={{ width: '100%', height: '1200px' }} />
+      <TrackTable
+        accessToken={accessToken}
+        title="Top Tracks in 4 Weeks"
+        tracks={tracksIn4Weeks}
+        savedTracks={savedTracks}
+        playlists={playlists}
+        isShowingPlaylist={false}
+        showingPlaylist={{}}
+        setSavedTracks={setSavedTracks}
+      />
+      <TrackTable
+        accessToken={accessToken}
+        title="Top Tracks in 6 Months"
+        tracks={tracksIn6Months}
+        savedTracks={savedTracks}
+        playlists={playlists}
+        isShowingPlaylist={false}
+        showingPlaylist={{}}
+        setSavedTracks={setSavedTracks}
+      />
+      <TrackTable
+        accessToken={accessToken}
+        title="Top Tracks of All Time"
+        tracks={tracksInAllTime}
+        savedTracks={savedTracks}
+        playlists={playlists}
+        isShowingPlaylist={false}
+        showingPlaylist={{}}
+        setSavedTracks={setSavedTracks}
+      />
+    </div>
   );
 };

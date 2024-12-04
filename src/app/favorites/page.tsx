@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
 import { Track } from '@/types/spotify';
-import SharedLayout from "../components/SharedLayout";
-import Sidebar from "./Sidebar";
 import TrackTable from '../components/TrackTable';
 
 export default function InsightsPage() {
@@ -74,6 +72,23 @@ export default function InsightsPage() {
     };
 
     fetchFavorites();
+
+    // Spotifyとデータベースのお気に入りを同期
+    const syncFavoritesWithSpotify = async () => {
+      try {
+        const response = await fetch('/api/favorite/syncFavorites');
+
+        if (response.ok) {
+          // await response.json();
+        } else {
+          throw new Error('Failed to sync favorites');
+        }
+      } catch (error) {
+        console.error('Error syncing favorites:', error);
+      }
+    };
+
+    syncFavoritesWithSpotify();
   }, []);
 
   // spotifyId取得後に実施
@@ -392,20 +407,18 @@ export default function InsightsPage() {
 
 
   return (
-    <SharedLayout SidebarComponent={Sidebar}>
-      <div>
-        <div ref={chartRef} style={{ width: '100%', height: '1600px' }} />
-        <TrackTable
-          accessToken={accessToken}
-          title="お気に入り"
-          tracks={savedTracks}
-          savedTracks={savedTracks}
-          playlists={playlists}
-          isShowingPlaylist={false}
-          showingPlaylist={{}}
-          setSavedTracks={setSavedTracks}
-        />
-      </div>
-    </SharedLayout>
+    <div className="px-12">
+      <TrackTable
+        accessToken={accessToken}
+        title=""
+        tracks={savedTracks}
+        savedTracks={savedTracks}
+        playlists={playlists}
+        isShowingPlaylist={false}
+        showingPlaylist={{}}
+        setSavedTracks={setSavedTracks}
+      />
+      <div ref={chartRef} style={{ width: '100%', height: '1600px' }} />
+    </div>
   );
 };

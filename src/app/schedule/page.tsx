@@ -112,36 +112,35 @@ export default function SchedulePage() {
   };
 
   return (
-    <div className="flex justify-between">
+    <div className="px-12 flex justify-between">
       <div className="w-2/3 pr-6">
-        <h2>Your Scheduled Playlists</h2>
-        <table className="min-w-full table-auto text-left text-sm text-gray-500 dark:text-gray-400">
-          <thead className="bg-gray-50 dark:bg-gray-700">
+        <h2>スケジュール</h2>
+        <table className="min-w-full table-auto text-left text-sm text-gray-500">
+          <thead>
             <tr>
-              <th scope="col" className="px-6 py-3 font-medium text-gray-900 dark:text-white">Date</th>
-              <th scope="col" className="px-6 py-3 font-medium text-gray-900 dark:text-white">Playlist</th>
-              <th scope="col" className="px-6 py-3 font-medium text-gray-900 dark:text-white">Device</th>
+              <th scope="col" className="px-6 py-3 font-medium text-center">日付</th>
+              <th scope="col" className="px-6 py-3 font-medium text-center">プレイリスト</th>
+              <th scope="col" className="px-6 py-3 font-medium text-center">デバイス</th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800">
+          <tbody>
             {schedules.map((schedule, index) => (
-              <tr className="border-b border-gray-200 dark:border-gray-600" key={index}>
-                <td className="px-6 py-4">{formatDate(schedule.time)}</td>
-                <td className="px-6 py-4">{schedule.playlistId}</td>
-                <td className="px-6 py-4">{schedule.deviceId}</td>
+              <tr className="border-b" key={index}>
+                <td className="py-3">{formatDate(schedule.time)}</td>
+                <td>{schedule.playlistId}</td>
+                <td>{schedule.deviceId}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* 入力フォームを右側に配置 */}
       <div className="w-1/3">
-        <h1>Schedule Playlist</h1>
+        <h1>スケジュール設定</h1>
         <form onSubmit={handleSubmit} className="max-w-lg p-6 rounded-lg">
           {/* デバイス選択 */}
           <div className="mb-4">
-            <label htmlFor="device" className="block text-gray-700 text-sm font-bold mb-2">Device</label>
+            <label htmlFor="device" className="block text-gray-500 text-sm font-bold mb-2">デバイス</label>
             <Select
               id="device"
               options={[
@@ -158,7 +157,7 @@ export default function SchedulePage() {
 
           {/* プレイリスト選択 */}
           <div className="mb-4">
-            <label htmlFor="playlist" className="block text-gray-700 text-sm font-bold mb-2">Playlist</label>
+            <label htmlFor="playlist" className="block text-gray-500 text-sm font-bold mb-2">プレイリスト</label>
             <Select
               id="playlist"
               options={[
@@ -175,7 +174,7 @@ export default function SchedulePage() {
 
           {/* 時間選択 */}
           <div className="mb-4">
-            <label htmlFor="time" className="block text-gray-700 text-sm font-bold mb-2">Time</label>
+            <label htmlFor="time" className="block text-gray-500 text-sm font-bold mb-2">日時</label>
             <Input
               type="datetime-local"
               id="time"
@@ -191,7 +190,7 @@ export default function SchedulePage() {
             {message && <p className="text-green-500 text-sm">{message}</p>}
           </div>
 
-          <Button type="submit" label="スケジュール保存" />
+          <Button type="submit" label="保存" />
         </form>
       </div>
     </div>
