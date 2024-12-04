@@ -31,13 +31,13 @@ export default function Example() {
             className={`font-semibold text-sm/6 ${pathname === '/insights' ? 'border-b-2' : ''}`}
             href="/insights"
           >
-            Insights
+            Top tracks
           </Link>
           <Link
-            className={`font-semibold text-sm/6 ${pathname === '/recommends' ? 'border-b-2' : ''}`}
-            href="/recommends"
+            className={`font-semibold text-sm/6 ${pathname === '/favorites' ? 'border-b-2' : ''}`}
+            href="/favorites"
           >
-            Recommends
+            Favorites
           </Link>
           <Link
             className={`font-semibold text-sm/6 ${pathname === '/playlists' ? 'border-b-2' : ''}`}

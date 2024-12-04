@@ -8,6 +8,7 @@ import { Track, Playlist } from '@/types/spotify';
 import SharedLayout from "../components/SharedLayout";
 import Sidebar from "./Sidebar";
 import TrackTable from '../components/TrackTable';
+import TimelineChart from "../components/TimelineChart";
 
 export default function InsightsPage() {
   const [spotifyId, setSpotifyId] = useState<string | null>(null);
@@ -18,10 +19,13 @@ export default function InsightsPage() {
   const [tracksInAllTime, setTracksInAllTime] = useState<Track[]>([]);
   const [favorites, setFavorites] = useState<Track[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
-  const chartRef = useRef<HTMLDivElement>(null);
-  const [data, setData] = useState<any[]>([]);
 
   const selectedView = useRecoilValue(selectedViewState);
+
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [data, setData] = useState<any[]>([]);
+  const [years, setYears] = useState<string[]>([]);
+  const updateFrequency = 2000;
 
   useEffect(() => {
     const spotifyData = sessionStorage.getItem('spotifyData');
@@ -150,164 +154,126 @@ export default function InsightsPage() {
   }, [spotifyId]);
 
   useEffect(() => {
-    const periods = ["All Time", "6 Months", "4 Weeks"];
-
-    // 欠損値を補完する関数
-    const fillMissingData = (tracks, periods) => {
-      const trackNames = Array.from(new Set(tracks.map((track) => track[1])));
-      const filledTracks = [];
-
-      trackNames.forEach((trackName) => {
-        periods.forEach((period) => {
-          const existingTrack = tracks.find(
-            (track) => track[1] === trackName && track[2] === period
-          );
-          if (existingTrack) {
-            filledTracks.push(existingTrack);
-          } else {
-            // 欠損値を補完
-            filledTracks.push([51, trackName, period]);
-          }
-        });
-      });
-
-      return filledTracks;
-    };
-
-    // データを整形
+    // バーレースチャート用にデータ整形
     const allTracks = [
-      ...tracksInAllTime.map((track, index) => [
-        index + 1,
-        track.name,
-        "All Time",
+      ...tracksIn4Weeks.map((track, index) => [
+        50 - index,
+        `${track.name} - ${track.artist}`,
+        "4 Weeks",
       ]),
       ...tracksIn6Months.map((track, index) => [
-        index + 1,
-        track.name,
+        50 - index,
+        `${track.name} - ${track.artist}`,
         "6 Months",
       ]),
-      ...tracksIn4Weeks.map((track, index) => [
-        index + 1,
-        track.name,
-        "4 Weeks",
+      ...tracksInAllTime.map((track, index) => [
+        50 - index,
+        `${track.name} - ${track.artist}`,
+        "All Time",
       ]),
     ];
 
-    // 補完したデータを設定
-    const completeTracks = fillMissingData(allTracks, periods);
-
-    setData([["Rank", "Track", "Period"], ...completeTracks]);
+    // 年ごとのフィルタリングの代わりに全データをセット
+    setData([["Ranking", "Track", "Period"], ...allTracks]);
+    setYears(["4 Weeks", "6 Months", "All Time"]);
   }, [tracksIn4Weeks, tracksIn6Months, tracksInAllTime]);
 
   useEffect(() => {
-    if (!chartRef.current) return;
+    if (!chartRef.current || data.length === 0 || years.length === 0) return;
+
     const myChart = echarts.init(chartRef.current);
-    let option;
+    let startIndex = 0;
+    let startYear = years[startIndex];
 
-    // NOTE: 非同期処理の実施タイミングの関係でタイムアウトが必要
-    setTimeout(() => {
-      run(data);
-    }, 0);
-
-    // チャートの描画
-    function run(_rawData: any) {
-      // データからすべてのトラック名を一意に抽出
-      const tracks = Array.from(
-        new Set(_rawData.slice(1).map((row: any) => row[1]))
-      );
-
-      const datasetWithFilters: any[] = [];
-      const seriesList: any[] = [];
-
-      tracks.forEach((track) => {
-        const datasetId = 'dataset_' + track;
-        datasetWithFilters.push({
-          id: datasetId,
-          fromDatasetId: 'dataset_raw',
-          transform: {
-            type: 'filter',
-            config: {
-              and: [
-                { dimension: 'Track', '=': track },
-              ],
-            },
-          },
-        });
-        seriesList.push({
-          type: 'line',
-          datasetId: datasetId,
-          showSymbol: false,
-          name: track,
-          endLabel: {
-            show: true,
-            formatter: function (params: any) {
-              const maxLength = 20;
-              const text = params.value[1];
-              return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
-            },
-            color: 'white',
-            fontSize: 12,
-            fontWeight: 100
-          },
-          labelLayout: {
-            moveOverlap: 'shiftY',
-          },
-          emphasis: {
-            focus: 'series',
-          },
+    const option: echarts.EChartsOption = {
+      grid: {
+        top: 10,
+        bottom: 30,
+        left: 150000000, // 棒の領域を非表示に設定
+        right: 80,
+      },
+      xAxis: {
+        axisLabel: {
+          show: false,
+        },
+      },
+      dataset: {
+        source: data.slice(1).filter((d: string[]) => d[2] === startYear),
+      },
+      yAxis: {
+        type: 'category',
+        inverse: true,
+        max: 10,
+        axisLabel: {
+          show: true,
+          fontSize: 14,
+          formatter: (value: any) => `${value}`,
+        },
+        animationDuration: 300,
+        animationDurationUpdate: 300,
+      },
+      series: [
+        {
+          realtimeSort: true,
+          seriesLayoutBy: 'column',
+          type: 'bar',
           encode: {
-            x: 'Period',
-            y: 'Rank',
-            label: 'Track',
-            itemName: 'Track',
+            x: 0,
+            y: 1,
           },
-          smooth: true,
-        });
-      });
-
-      option = {
-        animationDuration: 20000,
-        dataset: [
+          label: {
+            show: true,
+            precision: 1,
+            position: 'right',
+            valueAnimation: true,
+            fontFamily: 'monospace',
+          },
+          itemStyle: {
+            opacity: 0,
+          },
+        },
+      ],
+      animationDuration: 0,
+      animationDurationUpdate: updateFrequency,
+      animationEasing: 'linear',
+      animationEasingUpdate: 'linear',
+      graphic: {
+        elements: [
           {
-            id: 'dataset_raw',
-            source: _rawData,
+            type: 'text',
+            right: 160,
+            bottom: 60,
+            style: {
+              text: startYear,
+              font: 'bolder 80px monospace',
+              fill: 'rgba(100, 100, 100, 0.25)',
+            },
+            z: 100,
           },
-          ...datasetWithFilters,
         ],
-        title: {
-          text: 'ランキングチャート',
-        },
-        xAxis: {
-          type: 'category',
-          nameLocation: 'middle',
-          position: 'top',
-        },
-        yAxis: {
-          name: 'Rank',
-          nameLocation: 'start',
-          inverse: true,
-          min: 1,
-          max: 50,
-          axisLabel: {
-            formatter: (value) => `#${value}`,
-          },
-        },
-        grid: {
-          right: 140,
-        },
-        series: seriesList,
-      };
+      },
+    };
 
-      myChart.setOption(option);
-    }
+    myChart.setOption(option);
 
-    option && myChart.setOption(option);
+    const interval = setInterval(() => {
+      startIndex++;
+      if (startIndex >= years.length) {
+        clearInterval(interval);
+        return;
+      }
+      startYear = years[startIndex];
+      const source = data.slice(1).filter((d: string[]) => d[2] === startYear);
+      option.dataset!.source = source;
+      (option.graphic as any).elements[0].style.text = startYear;
+      myChart.setOption(option, true);
+    }, updateFrequency);
 
-    // クリーンアップ
     return () => {
+      clearInterval(interval);
       myChart.dispose();
     };
-  }, [data]);
+  }, [data, years, updateFrequency]);
 
   if (tracksIn4Weeks.length === 0 || tracksIn6Months.length === 0 || tracksInAllTime.length === 0) {
     return <div>Loading...</div>;
@@ -329,12 +295,18 @@ export default function InsightsPage() {
   return (
     <SharedLayout SidebarComponent={Sidebar}>
       <div>
+        <div ref={chartRef} style={{ width: '100%', height: '500px' }} />
         <div>
           {selectedView === "Top Tracks in 4 Weeks" && renderTrackTable("Top Tracks in 4 Weeks", tracksIn4Weeks)}
           {selectedView === "Top Tracks in 6 Months" && renderTrackTable("Top Tracks in 6 Months", tracksIn6Months)}
           {selectedView === "Top Tracks of All Time" && renderTrackTable("Top Tracks of All Time", tracksInAllTime)}
-          {selectedView === "Chart" && (
-            <div ref={chartRef} style={{ width: '100%', height: '1200px' }} />
+          {selectedView === "Favorites" && (
+            <div>
+              {renderTrackTable("お気に入り", savedTracks)}
+              <div className="w-11/12">
+                <TimelineChart favorites={favorites} />
+              </div>
+            </div>
           )}
         </div>
       </div>

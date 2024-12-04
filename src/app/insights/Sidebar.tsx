@@ -10,11 +10,28 @@ export default function Sidebar() {
     <div>
       <div className="flex">
         <div className="p-4">
-          <div className="cursor-pointer" onClick={() => setselectedView("Top Tracks of All Time")}>オールタイムトップトラック</div>
-          <div className="cursor-pointer" onClick={() => setselectedView("Top Tracks in 6 Months")}>6ヶ月間のトップトラック</div>
-          <div className="cursor-pointer" onClick={() => setselectedView("Top Tracks in 4 Weeks")}>4週間のトップトラック</div>
+          <div>トップトラック</div>
+          <ul className="">
+            <li
+              className="cursor-pointer px-2 rounded-sm hover:bg-green-500 transition-colors duration-300"
+              onClick={() => setselectedView("Top Tracks of All Time")}
+            >
+              オールタイム
+            </li>
+            <li
+              className="cursor-pointer px-2 rounded-sm hover:bg-green-500 transition-colors duration-300"
+              onClick={() => setselectedView("Top Tracks in 6 Months")}
+            >
+              6ヶ月間
+            </li>
+            <li
+              className="cursor-pointer px-2 rounded-sm hover:bg-green-500 transition-colors duration-300"
+              onClick={() => setselectedView("Top Tracks in 4 Weeks")}
+            >
+              4週間
+            </li>
+          </ul>
           {/* <div className="cursor-pointer" onClick={() => setselectedView("Chart")}>ランキングチャート</div> */}
-          <div className="cursor-pointer" onClick={() => setselectedView("Favorites")}>お気に入り</div>
         </div>
       </div>
       <style jsx>{`
