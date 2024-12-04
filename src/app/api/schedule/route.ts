@@ -11,13 +11,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { playlistId, deviceId, time } = await req.json();
+  const { playlistId, playlistName, deviceId, deviceName, time } = await req.json();
 
   const schedule = await prisma.schedule.create({
     data: {
-      userSpotifyId: session.user.spotifyId,
+      spotifyId: session.user.spotifyId,
       deviceId,
+      deviceName,
       playlistId,
+      playlistName,
       time: new Date(time),
     },
   });

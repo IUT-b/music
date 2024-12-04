@@ -13,7 +13,7 @@ export async function initializeScheduler() {
   });
 }
 
-export function scheduleTask(schedule: { id: number; userSpotifyId: string; deviceId: string; playlistId: string; time: Date }) {
+export function scheduleTask(schedule: { id: number; spotifyId: string; deviceId: string; playlistId: string; time: Date }) {
   const timeString = `${schedule.time.getMinutes()} ${schedule.time.getHours()} * * *`;
 
   // 既存のタスクを削除（重複防止）
@@ -25,14 +25,14 @@ export function scheduleTask(schedule: { id: number; userSpotifyId: string; devi
   // 新しいタスクを作成
   const task = cron.schedule(timeString, async () => {
     try {
-      const accessToken = await getAccessToken(schedule.userSpotifyId);
+      const accessToken = await getAccessToken(schedule.spotifyId);
       if (!accessToken) {
-        console.error("Access token not found for user:", schedule.userSpotifyId);
+        console.error("Access token not found for user:", schedule.spotifyId);
         return;
       }
 
       await playPlaylist(accessToken, schedule.deviceId, schedule.playlistId);
-      console.log(`Playlist ${schedule.playlistId} played for user ${schedule.userSpotifyId}`);
+      console.log(`Playlist ${schedule.playlistId} played for user ${schedule.spotifyId}`);
     } catch (error) {
       console.error("Error during scheduled playback:", error);
     }

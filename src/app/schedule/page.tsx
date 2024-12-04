@@ -8,12 +8,10 @@ import Button from '../components/Button';
 import { formatDate } from '@/lib/date';
 
 export default function SchedulePage() {
-  const [devices, setDevices] = useState<Device[]>([]);                       // 登録済の全デバイス
-  const [scheduledDevice, setScheduledDevice] = useState('');                 // スケジュール再生するデバイス
-  // const [scheduledDevice, setScheduledDevice] = useState<{ id: string; name: string } | null>(null);
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);                 // 登録済の全プレイリスト
-  const [scheduledPlaylist, setScheduledPlaylist] = useState('');             // スケジュール再生するプレイリスト
-  // const [scheduledPlaylist, setScheduledPlaylist] = useState<{ id: string; name: string } | null>(null);
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [scheduledDevice, setScheduledDevice] = useState<{ id: string; name: string } | null>(null);
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [scheduledPlaylist, setScheduledPlaylist] = useState<{ id: string; name: string } | null>(null);
   const [time, setTime] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);        // For success message
@@ -74,6 +72,18 @@ export default function SchedulePage() {
       return;
     }
 
+    const selectedDevice = devices.find((device) => device.id === scheduledDevice);
+    if (!selectedDevice) {
+      setError('Invalid device selected');
+      return;
+    }
+
+    const selectedPlaylist = playlists.find((playlist) => playlist.id === scheduledPlaylist);
+    if (!selectedPlaylist) {
+      setError('Invalid playlist selected');
+      return;
+    }
+
     setError(null);
     setMessage(null);
 
@@ -84,8 +94,10 @@ export default function SchedulePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          deviceId: scheduledDevice,
-          playlistId: scheduledPlaylist,
+          deviceId: selectedDevice.id,
+          deviceName: selectedDevice.name,
+          playlistId: selectedPlaylist.id,
+          playlistName: selectedPlaylist.name,
           time: new Date(time).toISOString(),
         }),
       });
@@ -118,17 +130,17 @@ export default function SchedulePage() {
         <table className="min-w-full table-auto text-left text-sm text-gray-500">
           <thead>
             <tr>
-              <th scope="col" className="px-6 py-3 font-medium text-center">日付</th>
-              <th scope="col" className="px-6 py-3 font-medium text-center">プレイリスト</th>
-              <th scope="col" className="px-6 py-3 font-medium text-center">デバイス</th>
+              <th scope="col" className="px-6 py-3 font-medium">日付</th>
+              <th scope="col" className="px-6 py-3 font-medium">プレイリスト</th>
+              <th scope="col" className="px-6 py-3 font-medium">デバイス</th>
             </tr>
           </thead>
           <tbody>
             {schedules.map((schedule, index) => (
               <tr className="border-b" key={index}>
                 <td className="py-3">{formatDate(schedule.time)}</td>
-                <td>{schedule.playlistId}</td>
-                <td>{schedule.deviceId}</td>
+                <td>{schedule.playlistName}</td>
+                <td>{schedule.deviceName}</td>
               </tr>
             ))}
           </tbody>

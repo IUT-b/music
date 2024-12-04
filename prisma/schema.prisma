@@ -27,13 +27,15 @@ model User {
 
 model Schedule {
   id              Int      @id @default(autoincrement())
-  userSpotifyId   String
+  spotifyId       String
   deviceId        String
+  deviceName      String
   playlistId      String
+  playlistName    String
   time            DateTime
   createdAt       DateTime @default(now())
 
-  user            User     @relation(fields: [userSpotifyId], references: [spotifyId])
+  user            User     @relation(fields: [spotifyId], references: [spotifyId])
 }
 
 model Favorite {
