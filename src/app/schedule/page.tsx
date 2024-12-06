@@ -11,8 +11,8 @@ import { formatDate } from '@/lib/date';
 
 export default function SchedulePage() {
   const [devices, setDevices] = useState<Device[]>([]);
-  const [scheduledDevice, setScheduledDevice] = useState<{ id: string; name: string } | null>(null);
-  const [scheduledPlaylist, setScheduledPlaylist] = useState<{ id: string; name: string } | null>(null);
+  const [scheduledDeviceId, setScheduledDeviceId] = useState<string | null>(null);
+  const [scheduledPlaylistId, setScheduledPlaylistId] = useState<string | null>(null);
   const [time, setTime] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);        // For success message
@@ -69,18 +69,18 @@ export default function SchedulePage() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!scheduledDevice || !scheduledPlaylist || !time) {
+    if (!scheduledDeviceId || !scheduledPlaylistId || !time) {
       setError('All fields are required');
       return;
     }
 
-    const selectedDevice = devices.find((device) => device.id === scheduledDevice);
+    const selectedDevice = devices.find((device) => device.id === scheduledDeviceId);
     if (!selectedDevice) {
       setError('Invalid device selected');
       return;
     }
 
-    const selectedPlaylist = playlists.find((playlist) => playlist.id === scheduledPlaylist);
+    const selectedPlaylist = playlists.find((playlist) => playlist.id === scheduledPlaylistId);
     if (!selectedPlaylist) {
       setError('Invalid playlist selected');
       return;
@@ -112,8 +112,8 @@ export default function SchedulePage() {
       setSchedules((prev) => [...prev, newSchedule]);
 
       // Reset the form
-      setScheduledDevice('');
-      setScheduledPlaylist('');
+      setScheduledDeviceId(null);
+      setScheduledPlaylistId(null);
       setTime('');
 
       // NOTE: 実行した時点で他のユーザー含めて全てのスケジュールを取得し、それに従って再生する。個別のユーザーのスケジュールのみでもよいか
@@ -168,8 +168,8 @@ export default function SchedulePage() {
                   label: device.name,
                 })),
               ]}
-              value={scheduledDevice}
-              onChange={setScheduledDevice}
+              value={scheduledDeviceId || ""}
+              onChange={setScheduledDeviceId}
             />
           </div>
 
@@ -185,8 +185,8 @@ export default function SchedulePage() {
                   label: playlist.name,
                 })),
               ]}
-              value={scheduledPlaylist}
-              onChange={setScheduledPlaylist}
+              value={scheduledPlaylistId || ""}
+              onChange={setScheduledPlaylistId}
             />
           </div>
 

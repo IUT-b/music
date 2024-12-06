@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from "recoil";
 import { savedTracksState, favoritesState, tracksIn4WeeksState, tracksIn6MonthsState, tracksInAllTimeState, playlistsState } from "../state/state";
 import * as echarts from 'echarts';
-import { Track } from '@/types/spotify';
 import TrackTable from '../components/TrackTable';
 
 export default function InsightsPage() {
