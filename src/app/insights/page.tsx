@@ -1,32 +1,79 @@
+// insightsでお気に入り登録したのがリロード後に反映されない→recoil使用したほうがよい？
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilValue } from "recoil";
 import * as echarts from 'echarts';
-import { selectedViewState } from "../state/state";
 import { Track, Playlist } from '@/types/spotify';
 import TrackTable from '../components/TrackTable';
 
 export default function InsightsPage() {
-  const [spotifyId, setSpotifyId] = useState<string | null>(null);
+  const [spotifyData, setSpotifyData] = useState(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [cacheExpiries, setCacheExpiries] = useState(null);
   const [savedTracks, setSavedTracks] = useState<Track[]>([]);
+  const [favorites, setFavorites] = useState<Track[]>([]);
   const [tracksIn4Weeks, setTracksIn4Weeks] = useState<Track[]>([]);
   const [tracksIn6Months, setTracksIn6Months] = useState<Track[]>([]);
   const [tracksInAllTime, setTracksInAllTime] = useState<Track[]>([]);
-  const [favorites, setFavorites] = useState<Track[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const chartRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<any[]>([]);
 
-  const selectedView = useRecoilValue(selectedViewState);
-
   useEffect(() => {
-    const spotifyData = sessionStorage.getItem('spotifyData');
-    // NOTE: spotifyDataがないことがある
-    if (spotifyData) {
-      setSpotifyId(JSON.parse(spotifyData).user.id);
+    // セッションを取得
+    const data = sessionStorage.getItem('spotifyData');
+
+    if (data) {
+      setSpotifyData(JSON.parse(data));
     }
+    else {
+      // セッションがない場合は作成
+      console.log('Start session')
+      const fetchSpotifyData = async () => {
+        try {
+          const response = await fetch('/api/spotify');
+          if (!response.ok) {
+            throw new Error('Failed to fetch top tracks');
+          }
+
+          const data = await response.json();
+          sessionStorage.setItem('spotifyData', JSON.stringify(data));
+          setSpotifyData(data);
+        } catch (error) {
+          if (error instanceof Error) {
+            setError(error.message);
+          } else {
+            setError('An unknown error occurred');
+          }
+        }
+      };
+      fetchSpotifyData();
+
+      // キャッシュの有効期限を更新
+      fetch('/api/spotify/cacheExpiry', {
+        method: 'POST',
+        body: JSON.stringify({
+          types: ['user', 'topTracks', 'playlists', 'devices', 'savedTracks'],
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // キャッシュの有効期限を取得
+    const fetchCacheExpiries = async () => {
+      try {
+        const response = await fetch('/api/spotify/cacheExpiry');
+        if (response.ok) {
+          const data = await response.json();
+          setCacheExpiries(data);
+        } else {
+          throw new Error('Failed to fetch cache expiries');
+        }
+      } catch (error) {
+        console.error('Error fetching cache expiries:', error);
+      }
+    };
+    fetchCacheExpiries();
 
     // アクセストークンを取得
     const fetchAccessToken = async () => {
@@ -44,44 +91,153 @@ export default function InsightsPage() {
       }
     };
     fetchAccessToken();
+  }, []);
+
+  useEffect(() => {
+    if (!spotifyData || !cacheExpiries) return;
 
     // トップトラックを取得
-    const fetchTopTracks = async () => {
-      try {
-        const response = await fetch('/api/spotify?data=topTracks');
+    const topTracksCacheExpiry = cacheExpiries.find((item: { type: string }) => item.type === 'topTracks');
+    const isTopTracksCacheValid = new Date(topTracksCacheExpiry?.expiresAt).getTime() > new Date().getTime();
 
-        if (response.ok) {
-          const data = await response.json();
-          setTracksIn4Weeks(data.topTracksIn4Weeks);
-          setTracksIn6Months(data.topTracksIn6Months);
-          setTracksInAllTime(data.topTracksInAllTime);
-        } else {
-          throw new Error('Failed to fetch top tracks');
+    // キャッシュが有効な場合
+    if (isTopTracksCacheValid) {
+      // NOTE: 取得済の場合はアプリ上でデータが変わっている場合があるのでアプリ上のデータを使用する
+      if (tracksIn4Weeks.length === 0) setTracksIn4Weeks(spotifyData.topTracksIn4Weeks);
+      if (tracksIn6Months.length === 0) setTracksIn6Months(spotifyData.topTracksIn6Months);
+      if (tracksInAllTime.length === 0) setTracksInAllTime(spotifyData.topTracksInAllTime);
+    }
+    // 有効期限切れのとき
+    else {
+      console.log('Cache expired');
+      // データ取得
+      const fetchTopTracks = async () => {
+        try {
+          const response = await fetch('/api/spotify?data=topTracks');
+
+          if (response.ok) {
+            const data = await response.json();
+            setTracksIn4Weeks(data.topTracksIn4Weeks);
+            setTracksIn6Months(data.topTracksIn6Months);
+            setTracksInAllTime(data.topTracksInAllTime);
+
+            // セッションに保存
+            const currentSessionData = sessionStorage.getItem('spotifyData');
+            let updatedSessionData = {};
+            if (currentSessionData) updatedSessionData = JSON.parse(currentSessionData);
+            updatedSessionData.topTracksIn4Weeks = data.topTracksIn4Weeks;
+            updatedSessionData.topTracksIn6Months = data.topTracksIn6Months;
+            updatedSessionData.topTracksInAllTime = data.topTracksInAllTime;
+            sessionStorage.setItem('spotifyData', JSON.stringify(updatedSessionData));
+
+            // キャッシュを更新
+            await fetch('/api/spotify/cacheExpiry', {
+              method: 'POST',
+              body: JSON.stringify({
+                types: ['topTracks'],
+              }),
+              headers: { 'Content-Type': 'application/json' },
+            });
+          } else {
+            throw new Error('Failed to fetch top tracks');
+          }
+        } catch (error) {
+          console.error('Error fetching top tracks:', error);
         }
-      } catch (error) {
-        console.error('Error fetching top tracks:', error);
-      }
-    };
+      };
+      fetchTopTracks();
+    }
 
-    fetchTopTracks();
+    // お気に入りを取得
+    const savedTracksCacheExpiry = cacheExpiries.find((item: { type: string }) => item.type === 'savedTracks');
+    const isSavedTracksCacheValid = new Date(savedTracksCacheExpiry?.expiresAt).getTime() > new Date().getTime();
 
-    // 登録済のお気に入りを取得
-    const fetchSavedTracks = async () => {
-      try {
-        const response = await fetch('/api/spotify?data=savedTracks');
+    // キャッシュが有効な場合
+    if (isSavedTracksCacheValid) {
+      // NOTE: 取得済の場合はアプリ上でデータが変わっている場合があるのでアプリ上のデータを使用する
+      if (savedTracks.length === 0) setSavedTracks(spotifyData.savedTracks);
+    }
+    // 有効期限切れのとき
+    else {
+      console.log('Cache expired');
+      // データ取得
+      const fetchSavedTracks = async () => {
+        try {
+          const response = await fetch('/api/spotify?data=savedTracks');
 
-        if (response.ok) {
-          const data = await response.json();
-          setSavedTracks(data.savedTracks);
-        } else {
-          throw new Error('Failed to fetch favorites');
+          if (response.ok) {
+            const data = await response.json();
+            setSavedTracks(data.savedTracks);
+
+            // セッションに保存
+            const currentSessionData = sessionStorage.getItem('spotifyData');
+            let updatedSessionData = {};
+            if (currentSessionData) updatedSessionData = JSON.parse(currentSessionData);
+            updatedSessionData.savedTracks = data.savedTracks;
+            sessionStorage.setItem('spotifyData', JSON.stringify(updatedSessionData));
+
+            // キャッシュを更新
+            await fetch('/api/spotify/cacheExpiry', {
+              method: 'POST',
+              body: JSON.stringify({
+                types: ['savedTracks'],
+              }),
+              headers: { 'Content-Type': 'application/json' },
+            });
+          } else {
+            throw new Error('Failed to fetch favorites');
+          }
+        } catch (error) {
+          console.error('Error fetching favorites:', error);
         }
-      } catch (error) {
-        console.error('Error fetching favorites:', error);
-      }
-    };
+      };
+      fetchSavedTracks();
+    }
 
-    fetchSavedTracks();
+    // プレイリストを取得
+    const playlistsCacheExpiry = cacheExpiries.find((item: { type: string }) => item.type === 'playlists');
+    const isPlaylistsCacheValid = new Date(playlistsCacheExpiry?.expiresAt).getTime() > new Date().getTime();
+
+    // キャッシュが有効な場合かつ未取得の場合
+    if (isPlaylistsCacheValid) {
+      if (playlists.length === 0) setPlaylists(spotifyData.playlists);
+    }
+    // 有効期限切れのとき
+    else {
+      console.log('Cache expired');
+      // データ取得
+      const fetchPlaylists = async () => {
+        try {
+          const response = await fetch('/api/spotify?data=playlists');
+
+          if (response.ok) {
+            const data = await response.json();
+            setPlaylists(data.playlists);
+
+            // セッションに保存
+            const currentSessionData = sessionStorage.getItem('spotifyData');
+            let updatedSessionData = {};
+            if (currentSessionData) updatedSessionData = JSON.parse(currentSessionData);
+            updatedSessionData.playlists = data.playlists;
+            sessionStorage.setItem('spotifyData', JSON.stringify(updatedSessionData));
+
+            // キャッシュを更新
+            await fetch('/api/spotify/cacheExpiry', {
+              method: 'POST',
+              body: JSON.stringify({
+                types: ['playlists'],
+              }),
+              headers: { 'Content-Type': 'application/json' },
+            });
+          } else {
+            throw new Error('Failed to fetch playlists');
+          }
+        } catch (error) {
+          console.error('Error fetching playlists:', error);
+        }
+      };
+      fetchPlaylists();
+    }
 
     // お気に入り(期間含む)を取得
     const fetchFavorites = async () => {
@@ -97,7 +253,6 @@ export default function InsightsPage() {
         console.error('Error fetching favorites:', error);
       }
     };
-
     fetchFavorites();
 
     // Spotifyとデータベースのお気に入りを同期
@@ -114,38 +269,8 @@ export default function InsightsPage() {
         console.error('Error syncing favorites:', error);
       }
     };
-
     syncFavoritesWithSpotify();
-  }, []);
-
-  // spotifyId取得後に実施
-  useEffect(() => {
-    // プレイリストを取得
-    const fetchPlaylists = async () => {
-      try {
-        const response = await fetch('/api/spotify?data=playlists');
-
-        if (response.ok) {
-          const data = await response.json();
-          setPlaylists(data.playlists);
-
-          // プレイリストをオーナーIDでフィルタリング
-          console.log(spotifyId);
-          const filteredPlaylists = data.playlists.filter(
-            (playlist: { owner: string }) => playlist.owner === spotifyId
-          );
-
-          setPlaylists(filteredPlaylists);
-        } else {
-          throw new Error('Failed to fetch top tracks');
-        }
-      } catch (error) {
-        console.error('Error fetching top tracks:', error);
-      }
-    };
-
-    fetchPlaylists();
-  }, [spotifyId]);
+  }, [spotifyData, cacheExpiries]);
 
   useEffect(() => {
     const periods = ["All Time", "6 Months", "4 Weeks"];
@@ -310,19 +435,6 @@ export default function InsightsPage() {
   if (tracksIn4Weeks.length === 0 || tracksIn6Months.length === 0 || tracksInAllTime.length === 0) {
     return <div>Loading...</div>;
   }
-
-  const renderTrackTable = (title, tracks) => (
-    <TrackTable
-      accessToken={accessToken}
-      title={title}
-      tracks={tracks}
-      savedTracks={savedTracks}
-      playlists={playlists}
-      isShowingPlaylist={false}
-      showingPlaylist={{}}
-      setSavedTracks={setSavedTracks}
-    />
-  );
 
   return (
     <div className="px-12">

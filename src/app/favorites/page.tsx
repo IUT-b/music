@@ -1,3 +1,4 @@
+// insightsでお気に入り登録したのがすぐに反映されない
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -24,6 +25,7 @@ export default function InsightsPage() {
     }
     else {
       // セッションがない場合は作成
+      console.log('Start session')
       const fetchSpotifyData = async () => {
         try {
           const response = await fetch('/api/spotify');
@@ -147,7 +149,7 @@ export default function InsightsPage() {
     }
     // 有効期限切れのとき
     else {
-      console.log('cache expired');
+      console.log('Cache expired');
       // データ取得
       const fetchPlaylists = async () => {
         try {
