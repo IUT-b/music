@@ -35,7 +35,7 @@ export async function GET() {
   }
 
   const schedules = await prisma.schedule.findMany({
-    where: { userSpotifyId: session.user.spotifyId },
+    where: { spotifyId: session.user.spotifyId },
     orderBy: { time: "asc" },
   });
 
