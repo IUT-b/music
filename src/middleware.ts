@@ -15,5 +15,5 @@ export async function middleware(req: Request) {
 
 // middlewareが適用されるURLパターンを指定
 export const config = {
-    matcher: ['/insights', '/favorites', '/playlists', '/schedule'],
+    matcher: ['/top-tracks', '/favorites', '/playlists', '/schedule'],
 };

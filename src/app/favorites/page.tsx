@@ -1,4 +1,3 @@
-// insightsでお気に入り登録したのがすぐに反映されない
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -8,7 +7,7 @@ import * as echarts from 'echarts';
 import { Track, Playlist } from '@/types/spotify';
 import TrackTable from '../components/TrackTable';
 
-export default function InsightsPage() {
+export default function FavoritesPage() {
   const [spotifyData, setSpotifyData] = useState(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [cacheExpiries, setCacheExpiries] = useState(null);

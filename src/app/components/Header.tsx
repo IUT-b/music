@@ -28,8 +28,8 @@ export default function Example() {
 
         <div className="hidden lg:flex lg:gap-x-12">
           <Link
-            className={`font-semibold text-sm/6 ${pathname === '/insights' ? 'border-b-2' : ''}`}
-            href="/insights"
+            className={`font-semibold text-sm/6 ${pathname === '/top-tracks' ? 'border-b-2' : ''}`}
+            href="/top-tracks"
           >
             Top tracks
           </Link>

@@ -15,8 +15,8 @@ export default function SchedulePage() {
   const [scheduledPlaylistId, setScheduledPlaylistId] = useState<string | null>(null);
   const [time, setTime] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);        // For success message
-  const [schedules, setSchedules] = useState<any[]>([]);              // State for fetching schedules
+  const [message, setMessage] = useState<string | null>(null);
+  const [schedules, setSchedules] = useState<any[]>([]);
 
   const [playlists, setPlaylists] = useRecoilState(playlistsState);
 
@@ -57,13 +57,6 @@ export default function SchedulePage() {
       console.error('Error fetching schedules:', error);
     }
   };
-
-
-  // const handleDeviceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   const selectedId = e.target.value;
-  //   const selectedDevice = devices.find((device) => device.id === selectedId);
-  //   setScheduledDevice(selectedDevice || null);
-  // };
 
   // スケジュールをデータベースへ保存
   const handleSubmit = async (event: React.FormEvent) => {

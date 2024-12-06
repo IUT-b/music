@@ -1,4 +1,3 @@
-// insightsでお気に入り登録したのがリロード後に反映されない→recoil使用したほうがよい？
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -7,7 +6,7 @@ import { savedTracksState, favoritesState, tracksIn4WeeksState, tracksIn6MonthsS
 import * as echarts from 'echarts';
 import TrackTable from '../components/TrackTable';
 
-export default function InsightsPage() {
+export default function TopTracksPage() {
   const [spotifyData, setSpotifyData] = useState(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [cacheExpiries, setCacheExpiries] = useState(null);

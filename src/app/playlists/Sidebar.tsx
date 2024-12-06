@@ -2,74 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from "recoil";
-import { selectedPlaylistState, createPlaylistModeState } from "../state/state";
+import { playlistsState, selectedPlaylistState, createPlaylistModeState } from "../state/state";
 import { Track, Playlist } from '@/types/spotify';
 
 export default function Sidebar() {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
-  const [savedTracks, setSavedTracks] = useState<Track[]>([]);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [isPublic, setIsPublic] = useState();
-  const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);        // For success message
-
+  const [playlists, setPlaylists] = useRecoilState(playlistsState);
   const [selectedPlaylist, setSelectedPlaylist] = useRecoilState(selectedPlaylistState);
   const [createPlaylistMode, setCreatePlaylistMode] = useRecoilState(createPlaylistModeState);
-
-  useEffect(() => {
-    // アクセストークンを取得
-    const fetchAccessToken = async () => {
-      try {
-        const response = await fetch('/api/spotify/getAccessToken');
-        const data = await response.json();
-
-        if (data.accessToken) {
-          setAccessToken(data.accessToken);
-        } else {
-          console.error("Failed to get access token");
-        }
-      } catch (error) {
-        console.error("Error fetching access token:", error);
-      }
-    };
-    fetchAccessToken();
-
-    // プレイリストを取得
-    const fetchPlaylists = async () => {
-      try {
-        const response = await fetch('/api/spotify?data=playlists');
-
-        if (response.ok) {
-          const data = await response.json();
-          setPlaylists(data.playlists);
-        } else {
-          throw new Error('Failed to fetch top tracks');
-        }
-      } catch (error) {
-        console.error('Error fetching top tracks:', error);
-      }
-    };
-    fetchPlaylists();
-
-    // 登録済のお気に入りを取得
-    const fetchSavedTracks = async () => {
-      try {
-        const response = await fetch('/api/spotify?data=savedTracks');
-
-        if (response.ok) {
-          const data = await response.json();
-          setSavedTracks(data.savedTracks);
-        } else {
-          throw new Error('Failed to fetch favorites');
-        }
-      } catch (error) {
-        console.error('Error fetching favorites:', error);
-      }
-    };
-    fetchSavedTracks();
-  }, []);
 
   // プレイリストを選択
   const handlePlaylistSelect = (playlist: Playlist) => {
