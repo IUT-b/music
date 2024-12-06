@@ -4,7 +4,7 @@ export type Track = {
     artist: string;
     album: string;
     popularity: number;
-    albumImageUrl: string;
+    imageUrl: string;
     trackUrl: string;
 };
 

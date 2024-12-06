@@ -12,6 +12,7 @@ export default function TopTracksPage() {
   const [cacheExpiries, setCacheExpiries] = useState(null);
   const chartRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const [savedTracks, setSavedTracks] = useRecoilState(savedTracksState);
   const [favorites, setFavorites] = useRecoilState(favoritesState);
@@ -290,7 +291,8 @@ export default function TopTracksPage() {
             filledTracks.push(existingTrack);
           } else {
             // 欠損値を補完
-            filledTracks.push([51, trackName, period]);
+            const imageUrl = tracks.find((track) => track[1] === trackName)?.[3] || ""; // TODO: 画像がない場合の画像を用意
+            filledTracks.push([51, trackName, period, imageUrl]);
           }
         });
       });
@@ -304,23 +306,26 @@ export default function TopTracksPage() {
         index + 1,
         track.name,
         "All Time",
+        track.imageUrl,
       ]),
       ...tracksIn6Months.map((track, index) => [
         index + 1,
         track.name,
         "6 Months",
+        track.imageUrl,
       ]),
       ...tracksIn4Weeks.map((track, index) => [
         index + 1,
         track.name,
         "4 Weeks",
+        track.imageUrl,
       ]),
     ];
 
     // 補完したデータを設定
     const completeTracks = fillMissingData(allTracks, periods);
 
-    setData([["Rank", "Track", "Period"], ...completeTracks]);
+    setData([["Rank", "Track", "Period", "Image"], ...completeTracks]);
   }, [tracksIn4Weeks, tracksIn6Months, tracksInAllTime]);
 
   useEffect(() => {
@@ -339,7 +344,6 @@ export default function TopTracksPage() {
       const tracks = Array.from(
         new Set(_rawData.slice(1).map((row: any) => row[1]))
       );
-
       const datasetWithFilters: any[] = [];
       const seriesList: any[] = [];
 
@@ -367,11 +371,38 @@ export default function TopTracksPage() {
             formatter: function (params: any) {
               const maxLength = 20;
               const text = params.value[1];
-              return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+              const imageUrl = params.value[3];
+              const truncatedText =
+                text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+
+              // return `{img|} {text|${truncatedText}}`;
+              return `{text|${truncatedText}}`;
             },
-            color: 'white',
-            fontSize: 12,
-            fontWeight: 100
+            rich: {
+              img: {
+                backgroundColor: {
+                  // image: "1298766_spotify_music_sound_icon.png", // 実際の画像URLに置き換えてください
+                  // image: (params) => params.value[3], // ここで動的に画像URLを取得
+                  // image: '{imageUrl}', // 動的に取得した画像URLを適用
+                  // image: (imageUrl) => imageUrl, // ここで画像URLを参照
+                  // image: (params: any) => `url(${params.value[3]})`, // 動的に画像URLを設定
+                  // image: (params: any) => {
+                  //   // const imageUrl = params.value[3] || '1298766_spotify_music_sound_icon.png'; // 画像URLがない場合にデフォルト画像を指定
+                  //   const imageUrl = '1298766_spotify_music_sound_icon.png'; // 画像URLがない場合にデフォルト画像を指定
+                  //   return `url(${imageUrl})`;
+                  // },
+                },
+                height: 20,
+                width: 20,
+                borderRadius: 10,
+                align: "center",
+              },
+              text: {
+                color: "white",
+                fontSize: 14,
+                fontWeight: 100,
+              },
+            },
           },
           labelLayout: {
             moveOverlap: 'shiftY',
@@ -441,7 +472,7 @@ export default function TopTracksPage() {
     <div className="px-12">
       <div ref={chartRef} style={{ width: '100%', height: '1200px' }} />
       <TrackTable
-        accessToken={accessToken}
+        accessToken={accessToken || ""}
         title="Top Tracks in 4 Weeks"
         tracks={tracksIn4Weeks}
         savedTracks={savedTracks}
@@ -451,7 +482,7 @@ export default function TopTracksPage() {
         setSavedTracks={setSavedTracks}
       />
       <TrackTable
-        accessToken={accessToken}
+        accessToken={accessToken || ""}
         title="Top Tracks in 6 Months"
         tracks={tracksIn6Months}
         savedTracks={savedTracks}
@@ -461,7 +492,7 @@ export default function TopTracksPage() {
         setSavedTracks={setSavedTracks}
       />
       <TrackTable
-        accessToken={accessToken}
+        accessToken={accessToken || ""}
         title="Top Tracks of All Time"
         tracks={tracksInAllTime}
         savedTracks={savedTracks}
