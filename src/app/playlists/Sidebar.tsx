@@ -90,7 +90,6 @@ export default function Sidebar() {
     <div>
       <div className="flex">
         <div className="p-4">
-          <h1>プレイリスト</h1>
           {playlists.map((playlist, index) => (
             <div key={index} className="flex items-center mb-4 cursor-pointer" onClick={() => handlePlaylistSelect(playlist)}>
               <img src={playlist.imageUrl || "/9025653_music_notes_icon.png"} alt={playlist.name} className="album-art" />

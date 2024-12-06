@@ -62,7 +62,6 @@ export default function SchedulePage() {
   //   setScheduledDevice(selectedDevice || null);
   // };
 
-
   // スケジュールをデータベースへ保存
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -119,7 +118,11 @@ export default function SchedulePage() {
       // スケジュール保存と同期しているか要確認(スケジュール保存前に実行されていないか)
       initializeSchedules();
     } catch (error) {
-      setError(error.message);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     }
   };
 
