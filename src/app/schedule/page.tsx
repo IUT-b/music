@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Playlist, Device } from '@/types/spotify';
+import { useRecoilState, useRecoilValue } from "recoil";
+import { playlistsState } from "../state/state";
+import { Device } from '@/types/spotify';
 import Select from '../components/Select';
 import Input from '../components/Input';
 import Button from '../components/Button';
@@ -10,12 +12,13 @@ import { formatDate } from '@/lib/date';
 export default function SchedulePage() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [scheduledDevice, setScheduledDevice] = useState<{ id: string; name: string } | null>(null);
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [scheduledPlaylist, setScheduledPlaylist] = useState<{ id: string; name: string } | null>(null);
   const [time, setTime] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);        // For success message
   const [schedules, setSchedules] = useState<any[]>([]);              // State for fetching schedules
+
+  const [playlists, setPlaylists] = useRecoilState(playlistsState);
 
   useEffect(() => {
     const spotifyData = sessionStorage.getItem('spotifyData');

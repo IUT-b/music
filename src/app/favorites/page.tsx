@@ -2,6 +2,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRecoilState, useRecoilValue } from "recoil";
+import { savedTracksState, favoritesState, playlistsState } from "../state/state";
 import * as echarts from 'echarts';
 import { Track, Playlist } from '@/types/spotify';
 import TrackTable from '../components/TrackTable';
@@ -10,11 +12,12 @@ export default function InsightsPage() {
   const [spotifyData, setSpotifyData] = useState(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [cacheExpiries, setCacheExpiries] = useState(null);
-  const [savedTracks, setSavedTracks] = useState<Track[]>([]);
-  const [favorites, setFavorites] = useState<Track[]>([]);
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const chartRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const [savedTracks, setSavedTracks] = useRecoilState(savedTracksState);
+  const [favorites, setFavorites] = useRecoilState(favoritesState);
+  const [playlists, setPlaylists] = useRecoilState(playlistsState);
 
   useEffect(() => {
     // セッションを取得

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRecoilValue } from "recoil";
-import { selectedPlaylistState, createPlaylistModeState } from "../state/state";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { savedTracksState, playlistsState, selectedPlaylistState, createPlaylistModeState } from "../state/state";
 import { createPlaylist } from '@/lib/spotify';
 import { Track, Playlist } from '@/types/spotify';
 import SharedLayout from "../components/SharedLayout";
@@ -16,14 +16,14 @@ export default function PlaylistsPage() {
   const [spotifyData, setSpotifyData] = useState(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [cacheExpiries, setCacheExpiries] = useState(null);
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
-  const [savedTracks, setSavedTracks] = useState<Track[]>([]);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [isPublic, setIsPublic] = useState();
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);        // For success message
 
+  const [savedTracks, setSavedTracks] = useRecoilState(savedTracksState);
+  const [playlists, setPlaylists] = useRecoilState(playlistsState);
   const selectedPlaylist = useRecoilValue(selectedPlaylistState);
   const createPlaylistMode = useRecoilValue(createPlaylistModeState);
 

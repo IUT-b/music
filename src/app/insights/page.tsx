@@ -2,22 +2,25 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRecoilState, useRecoilValue } from "recoil";
+import { savedTracksState, favoritesState, tracksIn4WeeksState, tracksIn6MonthsState, tracksInAllTimeState, playlistsState } from "../state/state";
 import * as echarts from 'echarts';
-import { Track, Playlist } from '@/types/spotify';
+import { Track } from '@/types/spotify';
 import TrackTable from '../components/TrackTable';
 
 export default function InsightsPage() {
   const [spotifyData, setSpotifyData] = useState(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [cacheExpiries, setCacheExpiries] = useState(null);
-  const [savedTracks, setSavedTracks] = useState<Track[]>([]);
-  const [favorites, setFavorites] = useState<Track[]>([]);
-  const [tracksIn4Weeks, setTracksIn4Weeks] = useState<Track[]>([]);
-  const [tracksIn6Months, setTracksIn6Months] = useState<Track[]>([]);
-  const [tracksInAllTime, setTracksInAllTime] = useState<Track[]>([]);
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const chartRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<any[]>([]);
+
+  const [savedTracks, setSavedTracks] = useRecoilState(savedTracksState);
+  const [favorites, setFavorites] = useRecoilState(favoritesState);
+  const [tracksIn4Weeks, setTracksIn4Weeks] = useRecoilState(tracksIn4WeeksState);
+  const [tracksIn6Months, setTracksIn6Months] = useRecoilState(tracksIn6MonthsState);
+  const [tracksInAllTime, setTracksInAllTime] = useRecoilState(tracksInAllTimeState);
+  const [playlists, setPlaylists] = useRecoilState(playlistsState);
 
   useEffect(() => {
     // セッションを取得
