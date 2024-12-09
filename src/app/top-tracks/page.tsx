@@ -429,9 +429,6 @@ export default function TopTracksPage() {
           },
           ...datasetWithFilters,
         ],
-        title: {
-          text: 'ランキングチャート',
-        },
         xAxis: {
           type: 'category',
           nameLocation: 'middle',
@@ -469,38 +466,45 @@ export default function TopTracksPage() {
   }
 
   return (
-    <div className="px-12">
-      <div ref={chartRef} style={{ width: '100%', height: '1200px' }} />
-      <TrackTable
-        accessToken={accessToken || ""}
-        title="Top Tracks in 4 Weeks"
-        tracks={tracksIn4Weeks}
-        savedTracks={savedTracks}
-        playlists={playlists}
-        isShowingPlaylist={false}
-        showingPlaylist={{}}
-        setSavedTracks={setSavedTracks}
-      />
-      <TrackTable
-        accessToken={accessToken || ""}
-        title="Top Tracks in 6 Months"
-        tracks={tracksIn6Months}
-        savedTracks={savedTracks}
-        playlists={playlists}
-        isShowingPlaylist={false}
-        showingPlaylist={{}}
-        setSavedTracks={setSavedTracks}
-      />
-      <TrackTable
-        accessToken={accessToken || ""}
-        title="Top Tracks of All Time"
-        tracks={tracksInAllTime}
-        savedTracks={savedTracks}
-        playlists={playlists}
-        isShowingPlaylist={false}
-        showingPlaylist={{}}
-        setSavedTracks={setSavedTracks}
-      />
-    </div>
+    <section id="top" className="top section dark-background">
+      <div className="container text-center">
+        <div className="row justify-content-center">
+          <div className="col-lg-12">
+            <h2 className="pt-8 text-gray-500">ランキングチャート</h2>
+            <div ref={chartRef} style={{ width: '100%', height: '1200px' }} />
+            <h2 className="pt-8 text-gray-500">Top Tracks in 4 weeks</h2>
+            <TrackTable
+              accessToken={accessToken || ""}
+              tracks={tracksIn4Weeks}
+              savedTracks={savedTracks}
+              playlists={playlists}
+              isShowingPlaylist={false}
+              showingPlaylist={{}}
+              setSavedTracks={setSavedTracks}
+            />
+            <h2 className="pt-8 text-gray-500">Top Tracks in 6 Months</h2>
+            <TrackTable
+              accessToken={accessToken || ""}
+              tracks={tracksIn6Months}
+              savedTracks={savedTracks}
+              playlists={playlists}
+              isShowingPlaylist={false}
+              showingPlaylist={{}}
+              setSavedTracks={setSavedTracks}
+            />
+            <h2 className="pt-8 text-gray-500">Top Tracks of All Time</h2>
+            <TrackTable
+              accessToken={accessToken || ""}
+              tracks={tracksInAllTime}
+              savedTracks={savedTracks}
+              playlists={playlists}
+              isShowingPlaylist={false}
+              showingPlaylist={{}}
+              setSavedTracks={setSavedTracks}
+            />
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };

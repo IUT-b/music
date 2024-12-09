@@ -295,10 +295,6 @@ export default function FavoritesPage() {
           }
         },
         animation: false,
-        title: {
-          text: 'お気に入りのタイムライン',
-          left: 'center'
-        },
         // dataZoom: [
         //   {
         //     type: 'slider',
@@ -505,18 +501,25 @@ export default function FavoritesPage() {
 
 
   return (
-    <div className="px-12">
-      <TrackTable
-        accessToken={accessToken}
-        title=""
-        tracks={savedTracks}
-        savedTracks={savedTracks}
-        playlists={playlists}
-        isShowingPlaylist={false}
-        showingPlaylist={{}}
-        setSavedTracks={setSavedTracks}
-      />
-      <div ref={chartRef} style={{ width: '100%', height: '1600px' }} />
-    </div>
+    <section id="top" className="top section dark-background">
+      <div className="container text-center">
+        <div className="row justify-content-center">
+          <div className="col-lg-12">
+            <h2 className="pt-8 text-gray-500">お気に入り</h2>
+            <TrackTable
+              accessToken={accessToken}
+              tracks={savedTracks}
+              savedTracks={savedTracks}
+              playlists={playlists}
+              isShowingPlaylist={false}
+              showingPlaylist={{}}
+              setSavedTracks={setSavedTracks}
+            />
+            <h2 className="pt-8 text-gray-500">お気に入りのタイムライン</h2>
+            <div ref={chartRef} style={{ width: '100%', height: '1600px' }} />
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };

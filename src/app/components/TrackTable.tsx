@@ -1,4 +1,3 @@
-// TODO: 順位の推移を表示する
 import React from "react";
 import { Track, Playlist } from '@/types/spotify';
 import MenuButton from "./MenuButton";
@@ -6,7 +5,6 @@ import MenuButton from "./MenuButton";
 interface Props {
   spotifyId: string;
   accessToken: string;
-  title: string;
   tracks: Track[];
   savedTracks: Track[];
   // onCheckboxChange: (trackId: string, checked: boolean) => void;
@@ -16,10 +14,9 @@ interface Props {
   setSavedTracks: React.Dispatch<React.SetStateAction<Track[]>>;
 }
 
-const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShowingPlaylist, showingPlaylist, setSavedTracks }: Props) => (
-  <div className="mt-6">
-    <div className="w-full mx-auto p-5">
-      <h2>{title}</h2>
+const TrackTable = ({ accessToken, tracks, savedTracks, playlists, isShowingPlaylist, showingPlaylist, setSavedTracks }: Props) => (
+  <div>
+    <div className="w-full mx-auto">
       <table className="min-w-full table-auto text-left text-sm text-gray-500">
         <thead>
           <tr className="border-b">
@@ -27,8 +24,8 @@ const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShow
             <th scope="col" className="px-6 py-3 font-medium"></th>
             <th scope="col" className="px-6 py-3 font-medium">タイトル</th>
             <th scope="col" className="px-6 py-3 font-medium">アルバム</th>
-            <th scope="col" className="px-6 py-3 font-medium"></th>
-            <th scope="col" className="px-6 py-3 font-medium"></th>
+            <th scope="col" className="py-3 font-medium"></th>
+            <th scope="col" className="py-3 font-medium"></th>
             <th scope="col" className="px-6 py-3 font-medium"></th>
           </tr>
         </thead>
@@ -39,7 +36,7 @@ const TrackTable = ({ accessToken, title, tracks, savedTracks, playlists, isShow
 
             return (
               <tr className="border-b" key={index}>
-                <td className="text-center ">
+                <td className="text-center">
                   {index + 1}
                 </td>
                 <td className="py-2">

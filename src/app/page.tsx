@@ -7,15 +7,27 @@ export default function Home() {
 
   if (!session) {
     return (
-      <div>
-        <h1>You are not signed in</h1>
-      </div>
+      <section id="top" className="top section dark-background">
+        <div className="container text-center">
+          <div className="row justify-content-center">
+            <div className="col-lg-12">
+              <h1>You are not signed in</h1>
+            </div>
+          </div>
+        </div>
+      </section>
     );
   }
 
   return (
-    <div>
-      <h1>Welcome, {session.user?.name}</h1>
-    </div>
+    <section id="top" className="top section dark-background">
+      <div className="container text-center">
+        <div className="row justify-content-center">
+          <div className="col-lg-12">
+            <h1>Welcome, {session.user?.name}</h1>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

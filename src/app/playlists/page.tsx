@@ -223,84 +223,170 @@ export default function PlaylistsPage() {
   }
 
   return (
-    <SharedLayout SidebarComponent={Sidebar}>
-      <div>
-        {createPlaylistMode ? (
-          // プレイリスト作成画面
-          <div>
-            <h1>プレイリスト作成</h1>
-            <form onSubmit={handleSubmit} className="max-w-lg p-6 rounded-lg">
+    // <SharedLayout SidebarComponent={Sidebar}>
+    //   <div>
+    //     {createPlaylistMode ? (
+    //       // プレイリスト作成画面
+    //       <div>
+    //         <h1>プレイリスト作成</h1>
+    //         <form onSubmit={handleSubmit} className="max-w-lg p-6 rounded-lg">
 
-              <div className="mb-4">
-                <label htmlFor="name" className="block text-sm font-bold mb-2">プレイリスト名</label>
-                <Input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={setName}
-                  required
-                />
-              </div>
+    //           <div className="mb-4">
+    //             <label htmlFor="name" className="block text-sm font-bold mb-2">プレイリスト名</label>
+    //             <Input
+    //               type="text"
+    //               id="name"
+    //               value={name}
+    //               onChange={setName}
+    //               required
+    //             />
+    //           </div>
 
-              <div className="mb-4">
-                <label htmlFor="description" className="block text-sm font-bold mb-2">プレイリストの説明</label>
-                <Input
-                  type="text"
-                  id="description"
-                  value={description}
-                  onChange={setDescription}
-                />
-              </div>
+    //           <div className="mb-4">
+    //             <label htmlFor="description" className="block text-sm font-bold mb-2">プレイリストの説明</label>
+    //             <Input
+    //               type="text"
+    //               id="description"
+    //               value={description}
+    //               onChange={setDescription}
+    //             />
+    //           </div>
 
-              <div className="mb-4">
-                <label htmlFor="isPublice" className="block text-sm font-bold mb-2">公開設定</label>
-                <Select
-                  id="isPublice"
-                  options={[
-                    { value: false, label: '' },
-                    { value: true, label: '公開' },
-                    { value: false, label: '非公開' },
-                  ]}
-                  value={isPublic}
-                  onChange={setIsPublic}
-                />
-              </div>
+    //           <div className="mb-4">
+    //             <label htmlFor="isPublice" className="block text-sm font-bold mb-2">公開設定</label>
+    //             <Select
+    //               id="isPublice"
+    //               options={[
+    //                 { value: false, label: '' },
+    //                 { value: true, label: '公開' },
+    //                 { value: false, label: '非公開' },
+    //               ]}
+    //               value={isPublic}
+    //               onChange={setIsPublic}
+    //             />
+    //           </div>
 
-              {/* エラーメッセージと成功メッセージ */}
-              <div className="mb-4">
-                {error && <p className="text-red-500 text-sm">{error}</p>}
-                {message && <p className="text-green-500 text-sm">{message}</p>}
-              </div>
+    //           {/* エラーメッセージと成功メッセージ */}
+    //           <div className="mb-4">
+    //             {error && <p className="text-red-500 text-sm">{error}</p>}
+    //             {message && <p className="text-green-500 text-sm">{message}</p>}
+    //           </div>
 
-              <Button type="submit" label="プレイリスト作成" />
-            </form>
+    //           <Button type="submit" label="プレイリスト作成" />
+    //         </form>
+    //       </div>
+    //     ) : (
+    //       // プレイリスト画面
+    //       <div>
+    //         {selectedPlaylist ? (
+    //           <div>
+    //             <div className="flex items-center justify-center">
+    //               <img src={selectedPlaylist.imageUrl || "/9025653_music_notes_icon.png"} alt={selectedPlaylist.name} width={200} height={200} />
+    //               <span className="px-2 text-5xl font-bold">{selectedPlaylist.name}</span>
+    //             </div>
+    //             <TrackTable
+    //               accessToken={accessToken}
+    //               title=""
+    //               tracks={selectedPlaylist.tracks}
+    //               savedTracks={savedTracks}
+    //               playlists={playlists}
+    //               isShowingPlaylist={true}
+    //               showingPlaylist={selectedPlaylist}
+    //               setSavedTracks={setSavedTracks}
+    //             />
+    //           </div>
+    //         ) : (
+    //           <p>プレイリストを選択してください。</p>
+    //         )}
+    //       </div>
+    //     )}
+    //   </div>
+    // </SharedLayout>
+
+    <section id="about" className="top section">
+      <div className="container">
+        <h2 className="row justify-content-center py-8 text-gray-500">プレイリスト</h2>
+        <div className="row gy-4">
+          <div className="col-lg-4">
+            <Sidebar />
           </div>
-        ) : (
-          // プレイリスト画面
-          <div>
-            {selectedPlaylist ? (
+          <div className="col-lg-8 content">
+            {createPlaylistMode ? (
+              // プレイリスト作成画面
               <div>
-                <div className="flex items-center justify-center">
-                  <img src={selectedPlaylist.imageUrl || "/9025653_music_notes_icon.png"} alt={selectedPlaylist.name} width={200} height={200} />
-                  <span className="px-2 text-5xl font-bold">{selectedPlaylist.name}</span>
-                </div>
-                <TrackTable
-                  accessToken={accessToken}
-                  title=""
-                  tracks={selectedPlaylist.tracks}
-                  savedTracks={savedTracks}
-                  playlists={playlists}
-                  isShowingPlaylist={true}
-                  showingPlaylist={selectedPlaylist}
-                  setSavedTracks={setSavedTracks}
-                />
+                <h1>プレイリスト作成</h1>
+                <form onSubmit={handleSubmit} className="max-w-lg p-6 rounded-lg">
+                  <div className="mb-4">
+                    <label htmlFor="name" className="block text-sm font-bold mb-2">プレイリスト名</label>
+                    <Input
+                      type="text"
+                      id="name"
+                      value={name}
+                      onChange={setName}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label htmlFor="description" className="block text-sm font-bold mb-2">プレイリストの説明</label>
+                    <Input
+                      type="text"
+                      id="description"
+                      value={description}
+                      onChange={setDescription}
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label htmlFor="isPublice" className="block text-sm font-bold mb-2">公開設定</label>
+                    <Select
+                      id="isPublice"
+                      options={[
+                        { value: false, label: '' },
+                        { value: true, label: '公開' },
+                        { value: false, label: '非公開' },
+                      ]}
+                      value={isPublic}
+                      onChange={setIsPublic}
+                    />
+                  </div>
+
+                  {/* エラーメッセージと成功メッセージ */}
+                  <div className="mb-4">
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
+                    {message && <p className="text-green-500 text-sm">{message}</p>}
+                  </div>
+
+                  <Button type="submit" label="プレイリスト作成" />
+                </form>
               </div>
             ) : (
-              <p>プレイリストを選択してください。</p>
+              // プレイリスト画面
+              <div>
+                {selectedPlaylist ? (
+                  <div>
+                    <div className="flex items-center justify-center">
+                      <img src={selectedPlaylist.imageUrl || "/9025653_music_notes_icon.png"} alt={selectedPlaylist.name} width={200} height={200} />
+                      <span className="px-2 text-5xl font-bold">{selectedPlaylist.name}</span>
+                    </div>
+                    <TrackTable
+                      accessToken={accessToken}
+                      tracks={selectedPlaylist.tracks}
+                      savedTracks={savedTracks}
+                      playlists={playlists}
+                      isShowingPlaylist={true}
+                      showingPlaylist={selectedPlaylist}
+                      setSavedTracks={setSavedTracks}
+                    />
+                  </div>
+                ) : (
+                  <p>プレイリストを選択してください。</p>
+                )}
+              </div>
             )}
           </div>
-        )}
+        </div>
       </div>
-    </SharedLayout>
+    </section>
   );
 }
