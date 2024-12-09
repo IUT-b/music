@@ -914,7 +914,7 @@ section,
   display: flex;
   align-items: center;
   justify-content: center;
-  background: url(../img/hero-bg.png);
+  /* background: url(../img/hero-bg.png); */
 }
 
 .hero .container {
