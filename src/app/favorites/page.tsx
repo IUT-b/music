@@ -235,8 +235,8 @@ export default function FavoritesPage() {
         // トラック名をtrackDataに追加
         if (!trackMap.has(favorite.spotifyTrackName)) {
           trackMap.set(favorite.spotifyTrackName, trackIndex);
-          trackData.push([favorite.spotifyTrackName]); // トラック名だけ
-          trackIndex++;  // インクリメントをここに移動
+          trackData.push([favorite.spotifyTrackName]);
+          trackIndex++;
         }
 
         favorite.periods.forEach((period) => {
@@ -288,8 +288,19 @@ export default function FavoritesPage() {
           trigger: 'item',
           formatter: function (params) {
             const trackIndex = params.data[0]; // トラックインデックスを取得
-            const startDate = new Date(params.data[1]).toISOString().split('T')[0]; // 開始日 (YYYY-MM-DD形式)
-            const endDate = new Date(params.data[2]).toISOString().split('T')[0];   // 終了日 (YYYY-MM-DD形式)
+
+            // UNIXタイムスタンプを日時に変換
+            const startDateRaw = params.data[1];
+            const endDateRaw = params.data[2];
+
+            const startDate = !isNaN(startDateRaw)
+              ? new Date(startDateRaw).toISOString().split('T')[0] // 開始日 (YYYY-MM-DD形式)
+              : "Invalid Date";
+
+            const endDate = !isNaN(endDateRaw)
+              ? new Date(endDateRaw).toISOString().split('T')[0] // 終了日 (YYYY-MM-DD形式)
+              : "Invalid Date";
+
             const trackName = _rawData.track.data[trackIndex][0];
             return `${trackName}<br> ${startDate} - ${endDate}`; // 表示内容をカスタマイズ
           }
