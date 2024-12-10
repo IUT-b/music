@@ -73,13 +73,13 @@ export default function TrackTable({ accessToken, tracks, savedTracks, playlists
                   </td>
                   <td>
                     <a href={track.trackUrl} target="_blank" rel="noopener noreferrer">
-                      <p className="text-white font-semibold truncate" title={track.name}>{track.name}</p>
+                      <p className="text-white font-semibold truncate mb-0" title={track.name}>{track.name}</p>
                     </a>
-                    <p className="text-sm truncate" title={track.artist}>{track.artist}</p>
+                    <p className="text-sm truncate mb-0" title={track.artist}>{track.artist}</p>
                   </td>
                   {isActive && (
                     <td>
-                      <p className="truncate" title={track.album}>{track.album}</p>
+                      <p className="truncate mb-0" title={track.album}>{track.album}</p>
                     </td>
                   )}
                   <td>
