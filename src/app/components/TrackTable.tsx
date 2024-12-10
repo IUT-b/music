@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import React from "react";
 import { Track, Playlist } from '@/types/spotify';
 import MenuButton from "./MenuButton";
@@ -17,6 +18,29 @@ interface Props {
 }
 
 export default function TrackTable({ accessToken, tracks, savedTracks, playlists, isShowingPlaylist, showingPlaylist, setSavedTracks }: Props) {
+  const [isActive, setIsActive] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
+
+      if (screenWidth < 768) {
+        setIsActive(false);
+      } else {
+        setIsActive(true);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);  // 画面のリサイズを監視
+
+    handleResize();
+
+    // Cleanup event listeners on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <div>
       <div className="w-full mx-auto">
@@ -26,7 +50,9 @@ export default function TrackTable({ accessToken, tracks, savedTracks, playlists
               <th scope="col" className="px-6 py-3 font-medium w-4">#</th>
               <th scope="col" className="px-6 py-3 font-medium"></th>
               <th scope="col" className="px-6 py-3 font-medium">タイトル</th>
-              <th scope="col" className="px-6 py-3 font-medium">アルバム</th>
+              {isActive && (
+                <th scope="col" className="px-6 py-3 font-medium">アルバム</th>
+              )}
               <th scope="col" className="py-3 font-medium"></th>
               <th scope="col" className="py-3 font-medium"></th>
               <th scope="col" className="px-6 py-3 font-medium"></th>
@@ -51,9 +77,11 @@ export default function TrackTable({ accessToken, tracks, savedTracks, playlists
                     </a>
                     <p className="text-sm truncate" title={track.artist}>{track.artist}</p>
                   </td>
-                  <td>
-                    <p className="truncate" title={track.album}>{track.album}</p>
-                  </td>
+                  {isActive && (
+                    <td>
+                      <p className="truncate" title={track.album}>{track.album}</p>
+                    </td>
+                  )}
                   <td>
                     {track.popularity && (
                       <span className="flex items-center text-sm px-1" title="人気度">
