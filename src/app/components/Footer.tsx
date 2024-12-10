@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 
-export default function Header() {
+export default function Footer() {
   return (
     <footer id="footer" className="footer dark-background">
       <div className="container footer-top">
         <div className="row gy-4">
           <div className="col-lg-6 col-md-6 footer-about">
             <a href="index.html" className="d-flex align-items-center">
-              <span className="sitename">tunetrek</span>
+              tunetrek
             </a>
             <div className="footer-contact pt-3">
               <p className="mt-3">

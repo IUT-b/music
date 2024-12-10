@@ -16,12 +16,7 @@ export default function Header() {
     <header id="header" className="header d-flex align-items-center fixed-top">
       <div className="container-fluid position-relative d-flex align-items-center justify-content-between">
         <Link href="/" className="logo d-flex align-items-center me-auto me-xl-0">
-          <img
-            alt=""
-            src="\1298766_spotify_music_sound_icon.png"
-            className="h-8 w-auto"
-          />
-          <h1 className="sitename">tunetrek</h1>
+          <h1 className="app-title">tunetrak</h1>
         </Link>
 
         <nav id="navmenu" className="navmenu">
@@ -44,12 +39,12 @@ export default function Header() {
             >
               Playlists
             </Link>
-            <Link
+            {/* <Link
               className={`font-semibold text-sm/6 ${pathname === '/schedule' ? 'active' : ''}`}
               href="/schedule"
             >
               Schedule
-            </Link>
+            </Link> */}
           </ul>
           <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>

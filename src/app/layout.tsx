@@ -1,6 +1,7 @@
 // TODO: データをキャッシュして表示しているので最新を取得するためのリフレッシュボタンを設置する
 'use client';
 
+import { useState, useEffect } from 'react';
 import { SessionProvider } from "next-auth/react";
 import { RecoilRoot } from "recoil";
 import "./globals.css";
@@ -8,6 +9,44 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const body = document.querySelector("body");
+      const header = document.querySelector("#header");
+
+      if (
+        header?.classList.contains("scroll-up-sticky") ||
+        header?.classList.contains("sticky-top") ||
+        header?.classList.contains("fixed-top")
+      ) {
+        // Toggle `scrolled` class on `body`
+        if (window.scrollY > 100) {
+          body?.classList.add("scrolled");
+        } else {
+          body?.classList.remove("scrolled");
+        }
+      }
+
+      // Toggle `isActive` state
+      if (window.scrollY > 200) {
+        setIsActive(true);
+      } else {
+        setIsActive(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("load", handleScroll);
+
+    // Cleanup event listeners on component unmount
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("load", handleScroll);
+    };
+  }, []);
+
   return (
     <RecoilRoot>
       <SessionProvider>
@@ -20,12 +59,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <meta name="keywords" content="" />
 
             {/* <!-- Favicons --> */}
-            <link href="\1298766_spotify_music_sound_icon.png" rel="icon" />
+            <link href="/favicon.png" rel="icon" className="rounded-4xl" />
             <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
 
             {/* <!-- Fonts --> */}
             <link href="https://fonts.googleapis.com" rel="preconnect" />
-            <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+            {/* <link href="https://fonts.gstatic.com" rel="preconnect" crossOrigin /> */}
             <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
 
             {/* <!-- Vendor CSS Files --> */}
@@ -46,7 +85,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 
             {/* <!-- Scroll Top --> */}
-            <a href="#" id="scroll-top" className="scroll-top d-flex align-items-center justify-content-center"><i className="bi bi-arrow-up-short"></i></a>
+            {/* <a href="#" id="scroll-top" className="scroll-top d-flex align-items-center justify-content-center"><i className="bi bi-arrow-up-short"></i></a> */}
+            <a href="#" id="scroll-top" className={`scroll-top d-flex align-items-center justify-content-center ${isActive ? "active" : ""
+              }`}><i className="bi bi-arrow-up-short"></i></a>
 
             {/* <!-- Preloader --> */}
             {/* <div id="preloader"></div> */}
@@ -61,9 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script> */}
 
             {/* <!-- Main JS File --> */}
-            {/* <script src="assets/js/main.js"></script> */}
             <script src="assets/js/main.js" />
-
           </body>
 
         </html>

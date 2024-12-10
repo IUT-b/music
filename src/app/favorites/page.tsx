@@ -515,7 +515,7 @@ export default function FavoritesPage() {
               showingPlaylist={{}}
               setSavedTracks={setSavedTracks}
             />
-            <h2 className="pt-8 text-gray-500">お気に入りのタイムライン</h2>
+            <h2 className="pt-8 text-gray-500">タイムライン</h2>
             <div ref={chartRef} style={{ width: '100%', height: '1600px' }} />
           </div>
         </div>
