@@ -505,7 +505,7 @@ export default function FavoritesPage() {
       <div className="container text-center">
         <div className="row justify-content-center">
           <div className="col-lg-12">
-            <h2 className="pt-8 text-gray-500">お気に入り</h2>
+            <h2 className="pt-8 menu-title">お気に入り</h2>
             <TrackTable
               accessToken={accessToken}
               tracks={savedTracks}
@@ -515,7 +515,7 @@ export default function FavoritesPage() {
               showingPlaylist={{}}
               setSavedTracks={setSavedTracks}
             />
-            <h2 className="pt-8 text-gray-500">タイムライン</h2>
+            <h2 className="pt-8 menu-title">タイムライン</h2>
             <div ref={chartRef} style={{ width: '100%', height: '1600px' }} />
           </div>
         </div>

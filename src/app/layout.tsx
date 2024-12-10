@@ -1,4 +1,3 @@
-// TODO: データをキャッシュして表示しているので最新を取得するためのリフレッシュボタンを設置する
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -54,12 +53,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <head>
             <meta charSet="utf-8" />
             <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-            <title>Index - Knight Bootstrap Template</title>
+            <title>tunetrek</title>
             <meta name="description" content="" />
             <meta name="keywords" content="" />
 
             {/* <!-- Favicons --> */}
-            <link href="/favicon.png" rel="icon" className="rounded-4xl" />
+            <link href="/favicon.png" rel="icon" type="image/png" />
             <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon" />
 
             {/* <!-- Fonts --> */}
@@ -70,9 +69,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {/* <!-- Vendor CSS Files --> */}
             <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
             <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
-            <link href="assets/vendor/aos/aos.css" rel="stylesheet" />
-            <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
-            <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet" />
+            {/* <link href="assets/vendor/aos/aos.css" rel="stylesheet" /> */}
+            {/* <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" /> */}
+            {/* <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet" /> */}
 
             {/* <!-- Main CSS File --> */}
             <link href="assets/css/main.css" rel="stylesheet" />

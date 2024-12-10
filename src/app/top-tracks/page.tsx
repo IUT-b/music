@@ -470,9 +470,9 @@ export default function TopTracksPage() {
       <div className="container text-center">
         <div className="row justify-content-center">
           <div className="col-lg-12">
-            <h2 className="pt-8 text-gray-500">ランキングチャート</h2>
+            <h2 className="pt-8 menu-title">ランキングチャート</h2>
             <div ref={chartRef} style={{ width: '100%', height: '1200px' }} />
-            <h2 className="pt-8 text-gray-500">Top Tracks in 4 weeks</h2>
+            <h2 className="pt-8 menu-title">Top Tracks in 4 weeks</h2>
             <TrackTable
               accessToken={accessToken || ""}
               tracks={tracksIn4Weeks}
@@ -482,7 +482,7 @@ export default function TopTracksPage() {
               showingPlaylist={{}}
               setSavedTracks={setSavedTracks}
             />
-            <h2 className="pt-8 text-gray-500">Top Tracks in 6 Months</h2>
+            <h2 className="pt-8 menu-title">Top Tracks in 6 Months</h2>
             <TrackTable
               accessToken={accessToken || ""}
               tracks={tracksIn6Months}
@@ -492,7 +492,7 @@ export default function TopTracksPage() {
               showingPlaylist={{}}
               setSavedTracks={setSavedTracks}
             />
-            <h2 className="pt-8 text-gray-500">Top Tracks of All Time</h2>
+            <h2 className="pt-8 menu-title">Top Tracks of All Time</h2>
             <TrackTable
               accessToken={accessToken || ""}
               tracks={tracksInAllTime}

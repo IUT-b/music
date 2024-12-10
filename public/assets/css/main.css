@@ -111,21 +111,21 @@ h6 {
   }
 }
 
-/* グラデーションテキスト */
 .app-title {
   font-family: 'Poppins', sans-serif;
   font-weight: bold;
-  /* font-size: 2rem; */
-  /* background: linear-gradient(90deg, #6a00f4, #ff0080); */
   background: linear-gradient(90deg, #1DB954, #0044CC);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  /* text-align: center; */
-  /* margin: 20px 0; */
 }
 
-/* Google Fontsを利用する場合 */
-/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap'); */
+.menu-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  background: linear-gradient(90deg, #7b2bfc, #ff3f8b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 /*--------------------------------------------------------------
 # Global Header
@@ -988,11 +988,4 @@ section,
 
 .clients .swiper-slide img:hover {
   transform: scale(1.1);
-}
-
-/*--------------------------------------------------------------
-# Starter Section Section
---------------------------------------------------------------*/
-.starter-section {
-  /* Add your styles here */
 }

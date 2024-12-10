@@ -284,9 +284,15 @@ export default function PlaylistsPage() {
               <div>
                 {selectedPlaylist ? (
                   <div>
-                    <div className="flex items-center justify-center">
-                      <img src={selectedPlaylist.imageUrl || "/9025653_music_notes_icon.png"} alt={selectedPlaylist.name} width={200} height={200} />
-                      <span className="px-2 text-5xl font-bold">{selectedPlaylist.name}</span>
+                    <div className="flex items-center">
+                      {selectedPlaylist.imageUrl ? (
+                        <img src={selectedPlaylist.imageUrl} alt={selectedPlaylist.name} className="w-52 h-52 rounded" />
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-52 h-52 rounded">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m9 9 10.5-3m0 6.553v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 1 1-.99-3.467l2.31-.66a2.25 2.25 0 0 0 1.632-2.163Zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 0 1-1.632 2.163l-1.32.377a1.803 1.803 0 0 1-.99-3.467l2.31-.66A2.25 2.25 0 0 0 9 15.553Z" />
+                        </svg>
+                      )}
+                      <span className="px-2 text-5xl menu-title">{selectedPlaylist.name}</span>
                     </div>
                     <TrackTable
                       accessToken={accessToken}
