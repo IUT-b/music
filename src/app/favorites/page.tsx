@@ -510,9 +510,22 @@ export default function FavoritesPage() {
     };
   }, [favorites]);
 
+  if (favorites.length === 0) {
+    return (
+      <section id="top" className="top section">
+        <div className="container text-center">
+          <div className="row justify-content-center">
+            <div className="col-lg-12">
+              Loading...
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section id="top" className="top section dark-background">
+    <section id="top" className="top section">
       <div className="container text-center">
         <div className="row justify-content-center">
           <div className="col-lg-12">

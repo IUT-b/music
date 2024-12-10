@@ -219,7 +219,17 @@ export default function PlaylistsPage() {
   };
 
   if (playlists.length === 0) {
-    return <div>Loading...</div>;
+    return (
+      <section id="top" className="top section">
+        <div className="container text-center">
+          <div className="row justify-content-center">
+            <div className="col-lg-12">
+              Loading...
+            </div>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (

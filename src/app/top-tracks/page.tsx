@@ -462,11 +462,21 @@ export default function TopTracksPage() {
   }, [data]);
 
   if (tracksIn4Weeks.length === 0 || tracksIn6Months.length === 0 || tracksInAllTime.length === 0) {
-    return <div>Loading...</div>;
+    return (
+      <section id="top" className="top section">
+        <div className="container text-center">
+          <div className="row justify-content-center">
+            <div className="col-lg-12">
+              Loading...
+            </div>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
-    <section id="top" className="top section dark-background">
+    <section id="top" className="top section">
       <div className="container text-center">
         <div className="row justify-content-center">
           <div className="col-lg-12">
