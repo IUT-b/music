@@ -20,8 +20,7 @@ export default function Home() {
             <div className="col-lg-8">
               <div className="row justify-content-center">
                 <div className="col-lg-8 d-flex justify-content-center">
-                  {/* <img src="app.png" alt="" className="img-fluid mb-3" /> */}
-                  <h1 className="app-title text-8xl">tunetrak</h1>
+                  <h1 className="app-title text-8xl">tunetrek</h1>
                 </div>
               </div>
               <h2>Welcome to Studios</h2>

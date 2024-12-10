@@ -225,12 +225,11 @@ export default function PlaylistsPage() {
   return (
     <section id="about" className="top section">
       <div className="container">
-        <h2 className="row justify-content-center py-8 text-gray-500">プレイリスト</h2>
         <div className="row gy-4">
-          <div className="col-lg-3">
+          <div className="col-lg-3 h-[calc(100vh-100px)] overflow-y-auto rounded bg-gray-950 px-1">
             <Sidebar />
           </div>
-          <div className="col-lg-9 content">
+          <div className="col-lg-9 content h-[calc(100vh-100px)] overflow-y-auto rounded bg-gradient-to-b from-gray-900 to-black-500">
             {createPlaylistMode ? (
               // プレイリスト作成画面
               <div>
@@ -304,6 +303,22 @@ export default function PlaylistsPage() {
                 )}
               </div>
             )}
+            <style jsx>{`
+              .content::-webkit-scrollbar {
+                width: 8px; /* スクロールバーの幅 */
+              }
+              .content::-webkit-scrollbar-track {
+                background: transparent; /* スクロールトラックの背景 */
+                border-radius: 1rem; /* トラックの角を丸める */
+              }
+              .content::-webkit-scrollbar-thumb {
+                background: linear-gradient(to bottom, #4a4a4a, #2c2c2c); /* スクロールバーのグラデーション */
+                border-radius: 2rem; /* スクロールバー自体の角丸 */
+              }
+              .content::-webkit-scrollbar-thumb:hover {
+                background: linear-gradient(to bottom, #5e5e5e, #3a3a3a); /* ホバー時のスタイル */
+              }
+            `}</style>
           </div>
         </div>
       </div>

@@ -16,7 +16,7 @@ export default function Header() {
     <header id="header" className="header d-flex align-items-center fixed-top">
       <div className="container-fluid position-relative d-flex align-items-center justify-content-between">
         <Link href="/" className="logo d-flex align-items-center me-auto me-xl-0">
-          <h1 className="app-title">tunetrak</h1>
+          <h1 className="app-title">tunetrek</h1>
         </Link>
 
         <nav id="navmenu" className="navmenu">
