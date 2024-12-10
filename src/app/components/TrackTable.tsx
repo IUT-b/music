@@ -18,16 +18,16 @@ interface Props {
 }
 
 export default function TrackTable({ accessToken, tracks, savedTracks, playlists, isShowingPlaylist, showingPlaylist, setSavedTracks }: Props) {
-  const [isActive, setIsActive] = useState(true);
+  const [isShow, setIsShow] = useState(true);
 
   useEffect(() => {
     const handleResize = () => {
       const screenWidth = window.innerWidth;
 
       if (screenWidth < 768) {
-        setIsActive(false);
+        setIsShow(false);
       } else {
-        setIsActive(true);
+        setIsShow(true);
       }
     };
 
@@ -50,7 +50,7 @@ export default function TrackTable({ accessToken, tracks, savedTracks, playlists
               <th scope="col" className="px-6 py-3 font-medium w-4">#</th>
               <th scope="col" className="px-6 py-3 font-medium"></th>
               <th scope="col" className="px-6 py-3 font-medium">タイトル</th>
-              {isActive && (
+              {isShow && (
                 <th scope="col" className="px-6 py-3 font-medium">アルバム</th>
               )}
               <th scope="col" className="py-3 font-medium"></th>
@@ -77,7 +77,7 @@ export default function TrackTable({ accessToken, tracks, savedTracks, playlists
                     </a>
                     <p className="text-sm truncate mb-0" title={track.artist}>{track.artist}</p>
                   </td>
-                  {isActive && (
+                  {isShow && (
                     <td>
                       <p className="truncate mb-0" title={track.album}>{track.album}</p>
                     </td>
