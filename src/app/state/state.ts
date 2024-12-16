@@ -1,12 +1,12 @@
 import { atom } from "recoil";
-import { Track, Playlist } from "@/types/spotify"
+import { Track, Playlist, Favorite } from "@/types/spotify"
 
 export const savedTracksState = atom<Track[]>({
     key: "savedTracksState",
     default: [],
 });
 
-export const favoritesState = atom<Track[]>({
+export const favoritesState = atom<Favorite[]>({
     key: "favoritesState",
     default: [],
 });

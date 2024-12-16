@@ -6,7 +6,6 @@ import { Track, Playlist } from '@/types/spotify';
 import MenuButton from "./MenuButton";
 
 interface Props {
-  spotifyId: string;
   accessToken: string;
   tracks: Track[];
   savedTracks: Track[];

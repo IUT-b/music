@@ -4,13 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from "recoil";
 import { savedTracksState, favoritesState, playlistsState } from "../state/state";
 import * as echarts from 'echarts';
-import { Track, Playlist } from '@/types/spotify';
+import { SpotifyData, CacheExpiry, Favorite } from '@/types/spotify';
 import TrackTable from '../components/TrackTable';
 
 export default function FavoritesPage() {
-  const [spotifyData, setSpotifyData] = useState(null);
+  const [spotifyData, setSpotifyData] = useState<SpotifyData | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [cacheExpiries, setCacheExpiries] = useState(null);
+  const [cacheExpiries, setCacheExpiries] = useState<CacheExpiry[] | null>(null);
   const chartRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -97,12 +97,12 @@ export default function FavoritesPage() {
 
     // お気に入りを取得
     const savedTracksCacheExpiry = cacheExpiries.find((item: { type: string }) => item.type === 'savedTracks');
-    const isSavedTracksCacheValid = new Date(savedTracksCacheExpiry?.expiresAt).getTime() > new Date().getTime();
+    const isSavedTracksCacheValid = new Date(savedTracksCacheExpiry?.expiresAt || 0).getTime() > new Date().getTime();
 
     // キャッシュが有効な場合
     if (isSavedTracksCacheValid) {
       // NOTE: 取得済の場合はアプリ上でデータが変わっている場合があるのでアプリ上のデータを使用する
-      if (savedTracks.length === 0) setSavedTracks(spotifyData.savedTracks);
+      if (savedTracks.length === 0) setSavedTracks(spotifyData.savedTracks || []);
     }
     // 有効期限切れのとき
     else {
@@ -118,7 +118,7 @@ export default function FavoritesPage() {
 
             // セッションに保存
             const currentSessionData = sessionStorage.getItem('spotifyData');
-            let updatedSessionData = {};
+            let updatedSessionData: SpotifyData = {};
             if (currentSessionData) updatedSessionData = JSON.parse(currentSessionData);
             updatedSessionData.savedTracks = data.savedTracks;
             sessionStorage.setItem('spotifyData', JSON.stringify(updatedSessionData));
@@ -143,11 +143,11 @@ export default function FavoritesPage() {
 
     // プレイリストを取得
     const playlistsCacheExpiry = cacheExpiries.find((item: { type: string }) => item.type === 'playlists');
-    const isPlaylistsCacheValid = new Date(playlistsCacheExpiry?.expiresAt).getTime() > new Date().getTime();
+    const isPlaylistsCacheValid = new Date(playlistsCacheExpiry?.expiresAt || 0).getTime() > new Date().getTime();
 
     // キャッシュが有効な場合かつ未取得の場合
     if (isPlaylistsCacheValid) {
-      if (playlists.length === 0) setPlaylists(spotifyData.playlists);
+      if (playlists.length === 0) setPlaylists(spotifyData.playlists || []);
     }
     // 有効期限切れのとき
     else {
@@ -163,7 +163,7 @@ export default function FavoritesPage() {
 
             // セッションに保存
             const currentSessionData = sessionStorage.getItem('spotifyData');
-            let updatedSessionData = {};
+            let updatedSessionData: SpotifyData = {};
             if (currentSessionData) updatedSessionData = JSON.parse(currentSessionData);
             updatedSessionData.playlists = data.playlists;
             sessionStorage.setItem('spotifyData', JSON.stringify(updatedSessionData));
@@ -224,8 +224,8 @@ export default function FavoritesPage() {
     if (favorites.length === 0) return;
 
     // トラックデータと期間データを変換する関数
-    const formatToChartData = (favorites: Array<{ spotifyTrackName: string, periods: Array<{ startDate: string, endDate: string }> }>) => {
-      const trackData: string[][] = [];
+    const formatToChartData = (favorites: Favorite[]) => {
+      const trackData: Array<[number, string]> = [];
       const periodData: (number | number[])[][] = [];
 
       const trackMap = new Map<string, number>(); // トラック名 -> トラックインデックスのマップ
@@ -235,13 +235,13 @@ export default function FavoritesPage() {
         // トラック名をtrackDataに追加
         if (!trackMap.has(favorite.spotifyTrackName)) {
           trackMap.set(favorite.spotifyTrackName, trackIndex);
-          trackData.push([favorite.spotifyTrackName]);
+          trackData.push([favorite.id, favorite.spotifyTrackName]);
           trackIndex++;
         }
 
         favorite.periods.forEach((period) => {
           const startDate = parseDate(period.startDate);
-          const endDate = parseDate(period.endDate) || new Date(); // 終了日時がnullなら現在時刻に設定
+          const endDate = period.endDate ? parseDate(period.endDate) || new Date() : new Date(); // 終了日時がnullなら現在時刻に設定
 
           if (startDate) {
             const trackIndex = trackMap.get(favorite.spotifyTrackName)!;
@@ -253,7 +253,7 @@ export default function FavoritesPage() {
       // 最終的にtrackとperiodを一つのオブジェクトにまとめる
       return {
         track: {
-          dimensions: ["Name"],
+          dimensions: ["ID", "Name"],
           data: trackData
         },
         period: {
@@ -285,8 +285,9 @@ export default function FavoritesPage() {
     function run(_rawData: any) {
       option = {
         tooltip: {
+          show: false,
           trigger: 'item',
-          formatter: function (params) {
+          formatter: function (params: any) {
             const trackIndex = params.data[0]; // トラックインデックスを取得
 
             // UNIXタイムスタンプを日時に変換
@@ -301,7 +302,7 @@ export default function FavoritesPage() {
               ? new Date(endDateRaw).toISOString().split('T')[0] // 終了日 (YYYY-MM-DD形式)
               : "Invalid Date";
 
-            const trackName = _rawData.track.data[trackIndex][0];
+            const trackName = _rawData.track.data[trackIndex][1];
             return `${trackName}<br> ${startDate} - ${endDate}`; // 表示内容をカスタマイズ
           }
         },
@@ -382,12 +383,12 @@ export default function FavoritesPage() {
             color: '#929ABA',
             inside: false,
             align: 'center',
-            formatter: function (value) {
+            formatter: function (value: any) {
               const date = new Date(value);
               const year = date.getFullYear();
               const month = String(date.getMonth() + 1).padStart(2, '0');
               const day = String(date.getDate()).padStart(2, '0');
-              return `${year}-${month}-${day}`;
+              return `${year}-${month}`;
             }
           },
         },
@@ -420,14 +421,14 @@ export default function FavoritesPage() {
               x: -1,
               y: 0
             },
-            data: _rawData.track.data.map(function (item, index) {
+            data: _rawData.track.data.map(function (item: any, index: any) {
               return [index].concat(item);
             })
           }
         ]
       };
 
-      function renderGanttItem(params, api) {
+      function renderGanttItem(params: any, api: any) {
         var categoryIndex = api.value(DIM_CATEGORY_INDEX);
         var timeArrival = api.coord([api.value(DIM_TIME_ARRIVAL), categoryIndex]);
         var timeDeparture = api.coord([api.value(DIM_TIME_DEPARTURE), categoryIndex]);
@@ -457,11 +458,14 @@ export default function FavoritesPage() {
           ]
         };
       }
-      function renderAxisLabelItem(params, api) {
+      function renderAxisLabelItem(params: any, api: any) {
         var y = api.coord([0, api.value(0)])[1];
         if (y < params.coordSys.y + 5) {
           return;
         }
+
+        // const trackId = api.value(1);
+
         return {
           type: 'group',
           position: [10, y],
@@ -479,18 +483,60 @@ export default function FavoritesPage() {
             {
               type: 'text',
               style: {
-                x: 24,
+                x: 34,
                 y: -3,
-                text: api.value(1),
+                text: api.value(2),
                 textVerticalAlign: 'bottom',
                 textFill: '#fff',
                 fontWeight: 'bold'
               }
-            }
+            },
+            // {
+            //   type: 'text',
+            //   style: {
+            //     x: 24,
+            //     y: -3,
+            //     text: '削除',
+            //     textVerticalAlign: 'bottom',
+            //     textFill: 'red'
+            //   },
+            //   event: {
+            //     mousemove: function () {
+            //       // Tooltipを表示
+            //       api.dispatchAction({
+            //         type: 'showTip',
+            //         seriesIndex: params.seriesIndex,
+            //         dataIndex: params.dataIndex
+            //       });
+            //     },
+            //     mouseout: function () {
+            //       // Tooltipを非表示
+            //       api.dispatchAction({
+            //         type: 'hideTip'
+            //       });
+            //     },
+
+            //     name: 'deleteClick',
+            //     data: {} // 削除対象のトラック情報を渡す
+            //   }
+            // }
           ]
         };
       }
-      function clipRectByRect(params, rect) {
+      // イベントリスナーの登録
+      // myChart.on('click', function (params) {
+      //   // const { trackId } = params.event.data;
+      //   console.log(`Label clicked! Track Index: ${params.data[1]}`);
+      //   if (params.event?.name === 'labelClick') {
+      //     // const { trackIndex, trackName } = params.event.data;
+      //     // console.log(`Label clicked! Track Index: ${trackIndex}, Track Name: ${trackName}`);
+      //     console.log("Label clicked! Track Index");
+
+      //     // 必要に応じて、他の処理を追加
+      //     // alert(`Clicked on: ${trackName}`);
+      //   }
+      // });
+      function clipRectByRect(params: any, rect: any) {
         return echarts.graphic.clipRectByRect(rect, {
           x: params.coordSys.x,
           y: params.coordSys.y,
@@ -531,12 +577,12 @@ export default function FavoritesPage() {
           <div className="col-lg-12">
             <h2 className="pt-8 menu-title">お気に入り</h2>
             <TrackTable
-              accessToken={accessToken}
+              accessToken={accessToken || ""}
               tracks={savedTracks}
               savedTracks={savedTracks}
               playlists={playlists}
               isShowingPlaylist={false}
-              showingPlaylist={{}}
+              showingPlaylist={[]}
               setSavedTracks={setSavedTracks}
             />
             <h2 className="pt-8 menu-title">タイムライン</h2>
