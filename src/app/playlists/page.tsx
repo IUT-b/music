@@ -213,7 +213,7 @@ export default function PlaylistsPage() {
         {
           id: "",
           name: newPlaylist.name,
-          description: newPlaylist.description,
+          description: newPlaylist.description || "",
           imageUrl: newPlaylist.images[0]?.url || null,
           tracks: [], // 初期では曲なし
         },

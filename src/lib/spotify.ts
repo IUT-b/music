@@ -16,15 +16,15 @@ export async function getUserData(token: string) {
 }
 
 // Spotifyのtop trackを取得
-export async function getTopTracks(token: string, timeRange = 'medium_term', limit = 10) {
+export async function getTopTracks(token: string, timeRange: "short_term" | "medium_term" | "long_term", limit = 10) {
   spotifyApi.setAccessToken(token);
 
   try {
     const topTracks = await spotifyApi.getMyTopTracks({ time_range: timeRange, limit });
-    return topTracks.body.items.map((track) => ({
+    return topTracks.body.items.map((track: any) => ({
       id: track.id,
       name: track.name,
-      artist: track.artists.map((artist) => artist.name).join(', '),
+      artist: track.artists.map((artist: any) => artist.name).join(', '),
       album: track.album.name,
       imageUrl: track.album.images[0]?.url,
       popularity: track.popularity,
@@ -74,8 +74,8 @@ export async function getPlaylists(token: string, limit = 10, offset = 0) {
   try {
     const playlists = await spotifyApi.getUserPlaylists({ limit, offset });
     return playlists.body.items
-      .filter((playlist) => playlist !== null) // NOTE: 一部のプレイリスト(オーナーがSpotifyのもの?)がnullになる
-      .map((playlist) => ({
+      .filter((playlist: any) => playlist !== null) // NOTE: 一部のプレイリスト(オーナーがSpotifyのもの?)がnullになる
+      .map((playlist: any) => ({
         name: playlist.name,
         id: playlist.id,
         description: playlist.description,
@@ -95,10 +95,10 @@ export async function getPlaylistTracks(token: string, playlistId: string, limit
 
   try {
     const tracks = await spotifyApi.getPlaylistTracks(playlistId, { limit, offset });
-    return tracks.body.items.map((track) => ({
+    return tracks.body.items.map((track: any) => ({
       id: track.track.id,
       name: track.track.name,
-      artist: track.track.artists.map(artist => artist.name).join(', '),
+      artist: track.track.artists.map((artist: { name: string }) => artist.name).join(', '),
       album: track.track.album.name,
       imageUrl: track.track.album.images[0]?.url,
       trackUrl: track.track.external_urls.spotify,
@@ -188,7 +188,7 @@ export async function playPlaylist(token: string, deviceId: string, playlistId: 
 
   try {
     const response = await spotifyApi.getMyDevices();  // 現在利用可能なデバイスを取得
-    const availableDevice = response.body.devices.find(device => device.id === deviceId);
+    const availableDevice = response.body.devices.find((device: { id: string | null }) => device.id === deviceId);
 
     if (!availableDevice) {
       throw new Error('Device not found or not available for playback.');
@@ -216,10 +216,10 @@ export async function getSavedTracks(token: string) {
     // 最初のリクエストを実行し、全曲を取得するためにページネーションを利用
     while (true) {
       const savedTracks = await spotifyApi.getMySavedTracks({ limit, offset });
-      allSavedTracks = [...allSavedTracks, ...savedTracks.body.items.map((item) => ({
+      allSavedTracks = [...allSavedTracks, ...savedTracks.body.items.map((item: any) => ({
         id: item.track.id,
         name: item.track.name,
-        artist: item.track.artists.map((artist) => artist.name).join(", "),
+        artist: item.track.artists.map((artist: { name: string }) => artist.name).join(", "),
         album: item.track.album.name,
         imageUrl: item.track.album.images[0]?.url,
         popularity: item.track.popularity,

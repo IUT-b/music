@@ -11,8 +11,8 @@ export type Track = {
 export type Playlist = {
     id: string;
     name: string;
-    description: string;
-    imageUrl: string;
+    description: string | null;
+    imageUrl: string | null;
     tracks: Track[];
 };
 
