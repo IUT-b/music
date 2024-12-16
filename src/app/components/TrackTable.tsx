@@ -12,7 +12,7 @@ interface Props {
   // onCheckboxChange: (trackId: string, checked: boolean) => void;
   playlists: Playlist[];
   isShowingPlaylist: boolean;
-  showingPlaylist: Playlist[];
+  showingPlaylist: Playlist | null;
   setSavedTracks: React.Dispatch<React.SetStateAction<Track[]>>;
 }
 

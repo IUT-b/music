@@ -1,13 +1,13 @@
 'use client';
 
-interface SelectProps {
+interface Props {
   id: string;
-  options: { value: string; label: string }[];
-  value: string;
-  onChange: (value: string) => void;
+  options: { value: any; label: string }[];
+  value: any;
+  onChange: (value: any) => void;
 }
 
-export default function Select({ id, options, value, onChange }: SelectProps) {
+export default function Select({ id, options, value, onChange }: Props) {
   return (
     <div className="w-64">
       <select

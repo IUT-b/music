@@ -1,11 +1,11 @@
+// TODO: プレイリストに追加したものが反映されないのを修正
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from "recoil";
 import { savedTracksState, playlistsState, selectedPlaylistState, createPlaylistModeState } from "../state/state";
 import { createPlaylist } from '@/lib/spotify';
-import { Track, Playlist } from '@/types/spotify';
-import SharedLayout from "../components/SharedLayout";
+import { SpotifyData, CacheExpiry } from '@/types/spotify';
 import Sidebar from "./Sidebar";
 import Button from '../components/Button';
 import Input from '../components/Input';
@@ -13,12 +13,12 @@ import Select from '../components/Select';
 import TrackTable from '../components/TrackTable';
 
 export default function PlaylistsPage() {
-  const [spotifyData, setSpotifyData] = useState(null);
+  const [spotifyData, setSpotifyData] = useState<SpotifyData | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [cacheExpiries, setCacheExpiries] = useState(null);
+  const [cacheExpiries, setCacheExpiries] = useState<CacheExpiry[] | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [isPublic, setIsPublic] = useState();
+  const [isPublic, setIsPublic] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);        // For success message
 
@@ -106,12 +106,12 @@ export default function PlaylistsPage() {
 
     // お気に入りを取得
     const savedTracksCacheExpiry = cacheExpiries.find((item: { type: string }) => item.type === 'savedTracks');
-    const isSavedTracksCacheValid = new Date(savedTracksCacheExpiry?.expiresAt).getTime() > new Date().getTime();
+    const isSavedTracksCacheValid = new Date(savedTracksCacheExpiry?.expiresAt || 0).getTime() > new Date().getTime();
 
     // キャッシュが有効な場合
     if (isSavedTracksCacheValid) {
       // NOTE: 取得済の場合はアプリ上でデータが変わっている場合があるのでアプリ上のデータを使用する
-      if (savedTracks.length === 0) setSavedTracks(spotifyData.savedTracks);
+      if (savedTracks.length === 0) setSavedTracks(spotifyData.savedTracks || []);
     }
     // 有効期限切れのとき
     else {
@@ -127,7 +127,7 @@ export default function PlaylistsPage() {
 
             // セッションに保存
             const currentSessionData = sessionStorage.getItem('spotifyData');
-            let updatedSessionData = {};
+            let updatedSessionData: SpotifyData = {};
             if (currentSessionData) updatedSessionData = JSON.parse(currentSessionData);
             updatedSessionData.savedTracks = data.savedTracks;
             sessionStorage.setItem('spotifyData', JSON.stringify(updatedSessionData));
@@ -152,11 +152,11 @@ export default function PlaylistsPage() {
 
     // プレイリストを取得
     const playlistsCacheExpiry = cacheExpiries.find((item: { type: string }) => item.type === 'playlists');
-    const isPlaylistsCacheValid = new Date(playlistsCacheExpiry?.expiresAt).getTime() > new Date().getTime();
+    const isPlaylistsCacheValid = new Date(playlistsCacheExpiry?.expiresAt || 0).getTime() > new Date().getTime();
 
     // キャッシュが有効な場合かつ未取得の場合
     if (isPlaylistsCacheValid) {
-      if (playlists.length === 0) setPlaylists(spotifyData.playlists);
+      if (playlists.length === 0) setPlaylists(spotifyData.playlists || []);
     }
     // 有効期限切れのとき
     else {
@@ -172,7 +172,7 @@ export default function PlaylistsPage() {
 
             // セッションに保存
             const currentSessionData = sessionStorage.getItem('spotifyData');
-            let updatedSessionData = {};
+            let updatedSessionData: SpotifyData = {};
             if (currentSessionData) updatedSessionData = JSON.parse(currentSessionData);
             updatedSessionData.playlists = data.playlists;
             sessionStorage.setItem('spotifyData', JSON.stringify(updatedSessionData));
@@ -201,11 +201,17 @@ export default function PlaylistsPage() {
     event.preventDefault();
 
     try {
+      if (!accessToken) {
+        console.error("Access token is missing. Cannot create playlist.");
+        return;
+      }
+
       const newPlaylist = await createPlaylist(accessToken, name, description, isPublic);
 
       // プレイリストをローカルに追加してUIを即時更新
       setPlaylists((prev) => [
         {
+          id: "",
           name: newPlaylist.name,
           description: newPlaylist.description,
           imageUrl: newPlaylist.images[0]?.url || null,
@@ -305,7 +311,7 @@ export default function PlaylistsPage() {
                       <span className="px-2 text-5xl menu-title">{selectedPlaylist.name}</span>
                     </div>
                     <TrackTable
-                      accessToken={accessToken}
+                      accessToken={accessToken || ""}
                       tracks={selectedPlaylist.tracks}
                       savedTracks={savedTracks}
                       playlists={playlists}

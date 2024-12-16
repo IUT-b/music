@@ -582,7 +582,7 @@ export default function FavoritesPage() {
               savedTracks={savedTracks}
               playlists={playlists}
               isShowingPlaylist={false}
-              showingPlaylist={[]}
+              showingPlaylist={null}
               setSavedTracks={setSavedTracks}
             />
             <h2 className="pt-8 menu-title">タイムライン</h2>

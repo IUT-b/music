@@ -7,12 +7,12 @@ import { addTrackToSavedTracks, removeTrackFromSavedTracks, removeTracksFromPlay
 
 interface Props {
   accessToken: string;
-  selectedTrack: Track[];
+  selectedTrack: Track;
   playlists: Playlist[];
   isShowingPlaylist: boolean;
   savedTracks: Track[];
   setSavedTracks: React.Dispatch<React.SetStateAction<Track[]>>;
-  showingPlaylist: Playlist[];
+  showingPlaylist: Playlist | null;
   isTrackSaved: boolean;
 }
 
@@ -127,7 +127,9 @@ export default function MenuButton({ accessToken, selectedTrack, playlists, isSh
   const handleRemoveFromPlaylist = async () => {
     try {
       const trackUris = [`spotify:track:${selectedTrack.id}`];
-      await removeTracksFromPlaylist(accessToken, showingPlaylist.id, trackUris);
+      if (showingPlaylist) {
+        await removeTracksFromPlaylist(accessToken, showingPlaylist.id, trackUris);
+      }
 
       setIsMenuOpen(false);
     } catch (error) {
