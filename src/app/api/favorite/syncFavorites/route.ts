@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
-import { getAccessToken } from '@/lib/auth';
+import { authOptions, getAccessToken } from "@/lib/auth";
 import { syncFavoritesWithSpotify } from '@/lib/syncFavorites';
 
 export async function GET() {

@@ -2,8 +2,8 @@
 import { NextResponse } from 'next/server';
 import { getUserData, getTopTracks, getPlaylists, getPlaylistTracks, getDevices, getSavedTracks } from '../../../lib/spotify';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
-import { getAccessToken } from '@/lib/auth';
+import { authOptions, getAccessToken } from "@/lib/auth";
+import { Playlist } from '@/types/spotify';
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
@@ -20,6 +20,11 @@ export async function GET(req: Request) {
   try {
     // アクセストークンを更新
     const accessToken = await getAccessToken(session.user.spotifyId);
+
+    if (!accessToken) {
+      console.error("Access token is null. Aborting operation.");
+      return; // 関数を中断
+    }
 
     // dataType によって返すデータを制御
     const responseData: any = {};
@@ -42,7 +47,7 @@ export async function GET(req: Request) {
       const playlists = await getPlaylists(accessToken, limit, offset);
 
       // プレイリスト内の曲を取得
-      const playlistsWithTracks = await Promise.all(playlists.map(async (playlist) => {
+      const playlistsWithTracks = await Promise.all(playlists.map(async (playlist: Playlist) => {
         const tracks = await getPlaylistTracks(accessToken, playlist.id, limit);
         return { ...playlist, tracks };
       }));

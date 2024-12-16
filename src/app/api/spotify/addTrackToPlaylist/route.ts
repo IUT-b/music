@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
-import { getAccessToken } from '@/lib/auth';
+import { authOptions, getAccessToken } from "@/lib/auth";
 import { addTracksToPlaylist } from '@/lib/spotify';
 
 export async function POST(req: Request) {
@@ -13,7 +12,7 @@ export async function POST(req: Request) {
 
     // リクエストデータの取得
     const { playlistId, trackUris } = await req.json();
-console.log(trackUris);
+    console.log(trackUris);
     try {
         const accessToken = await getAccessToken(session.user.spotifyId);
         if (!accessToken) {

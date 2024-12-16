@@ -1,8 +1,7 @@
 // クライアントサイドからアクセストークンを取得するapi
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
-import { getAccessToken } from '@/lib/auth';
+import { authOptions, getAccessToken } from "@/lib/auth";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
