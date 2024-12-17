@@ -39,12 +39,6 @@ export default function Header() {
             >
               Playlists
             </Link>
-            {/* <Link
-              className={`font-semibold text-sm/6 ${pathname === '/schedule' ? 'active' : ''}`}
-              href="/schedule"
-            >
-              Schedule
-            </Link> */}
           </ul>
           <i className="mobile-nav-toggle d-xl-none bi bi-list"></i>
         </nav>
