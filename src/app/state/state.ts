@@ -31,11 +31,6 @@ export const playlistsState = atom<Playlist[]>({
     default: [],
 });
 
-export const accessTokenState = atom<string | null>({
-    key: "accessTokenState",
-    default: null,
-});
-
 export const selectedViewState = atom<"Chart" | "Top Tracks in 4 Weeks" | "Top Tracks in 6 Months" | "Top Tracks of All Time" | "Favorites">({
     key: "selectedViewState",
     default: "Chart",

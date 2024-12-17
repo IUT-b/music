@@ -1,17 +1,11 @@
 // NOTE: 更新したものだけを取得できるようにした方がよい
 import { NextResponse } from 'next/server';
-import { getUserData, getTopTracks, getPlaylists, getPlaylistTracks, getDevices, getSavedTracks } from '../../../lib/spotify';
+import { getUserData, getTopTracks, getPlaylists, getPlaylistTracks, getDevices, getSavedTracks } from '@/lib/spotify';
 import { getServerSession } from 'next-auth';
 import { authOptions, getAccessToken } from "@/lib/auth";
-import { Playlist } from '@/types/spotify';
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
-
-  if (!session?.accessToken) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   const url = new URL(req.url);
   const dataType = url.searchParams.get('data'); // 取得したいデータのタイプ ('tracks' や 'playlists' など)
   const limit = 50;
@@ -19,11 +13,15 @@ export async function GET(req: Request) {
 
   try {
     // アクセストークンを更新
+    if (!session?.user.spotifyId) {
+      console.error("Spotify ID is null. Aborting operation.");
+      return;
+    }
     const accessToken = await getAccessToken(session.user.spotifyId);
 
     if (!accessToken) {
       console.error("Access token is null. Aborting operation.");
-      return; // 関数を中断
+      return;
     }
 
     // dataType によって返すデータを制御
@@ -47,7 +45,7 @@ export async function GET(req: Request) {
       const playlists = await getPlaylists(accessToken, limit, offset);
 
       // プレイリスト内の曲を取得
-      const playlistsWithTracks = await Promise.all(playlists.map(async (playlist: Playlist) => {
+      const playlistsWithTracks = await Promise.all(playlists.map(async (playlist: any) => {
         const tracks = await getPlaylistTracks(accessToken, playlist.id, limit);
         return { ...playlist, tracks };
       }));

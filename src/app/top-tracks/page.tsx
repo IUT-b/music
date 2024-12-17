@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from "recoil";
 import { savedTracksState, favoritesState, tracksIn4WeeksState, tracksIn6MonthsState, tracksInAllTimeState, playlistsState } from "../state/state";
 import * as echarts from 'echarts';
+import { SpotifyData, CacheExpiry } from '@/types/spotify';
 import TrackTable from '../components/TrackTable';
 
 export default function TopTracksPage() {
-  const [spotifyData, setSpotifyData] = useState(null);
+  const [spotifyData, setSpotifyData] = useState<SpotifyData | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [cacheExpiries, setCacheExpiries] = useState(null);
+  const [cacheExpiries, setCacheExpiries] = useState<CacheExpiry[] | null>(null);
   const chartRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -100,14 +101,14 @@ export default function TopTracksPage() {
 
     // トップトラックを取得
     const topTracksCacheExpiry = cacheExpiries.find((item: { type: string }) => item.type === 'topTracks');
-    const isTopTracksCacheValid = new Date(topTracksCacheExpiry?.expiresAt).getTime() > new Date().getTime();
+    const isTopTracksCacheValid = new Date(topTracksCacheExpiry?.expiresAt || 0).getTime() > new Date().getTime();
 
     // キャッシュが有効な場合
     if (isTopTracksCacheValid) {
       // NOTE: 取得済の場合はアプリ上でデータが変わっている場合があるのでアプリ上のデータを使用する
-      if (tracksIn4Weeks.length === 0) setTracksIn4Weeks(spotifyData.topTracksIn4Weeks);
-      if (tracksIn6Months.length === 0) setTracksIn6Months(spotifyData.topTracksIn6Months);
-      if (tracksInAllTime.length === 0) setTracksInAllTime(spotifyData.topTracksInAllTime);
+      if (tracksIn4Weeks.length === 0) setTracksIn4Weeks(spotifyData.topTracksIn4Weeks || []);
+      if (tracksIn6Months.length === 0) setTracksIn6Months(spotifyData.topTracksIn6Months || []);
+      if (tracksInAllTime.length === 0) setTracksInAllTime(spotifyData.topTracksInAllTime || []);
     }
     // 有効期限切れのとき
     else {
@@ -125,7 +126,7 @@ export default function TopTracksPage() {
 
             // セッションに保存
             const currentSessionData = sessionStorage.getItem('spotifyData');
-            let updatedSessionData = {};
+            let updatedSessionData: SpotifyData = {};
             if (currentSessionData) updatedSessionData = JSON.parse(currentSessionData);
             updatedSessionData.topTracksIn4Weeks = data.topTracksIn4Weeks;
             updatedSessionData.topTracksIn6Months = data.topTracksIn6Months;
@@ -152,12 +153,12 @@ export default function TopTracksPage() {
 
     // お気に入りを取得
     const savedTracksCacheExpiry = cacheExpiries.find((item: { type: string }) => item.type === 'savedTracks');
-    const isSavedTracksCacheValid = new Date(savedTracksCacheExpiry?.expiresAt).getTime() > new Date().getTime();
+    const isSavedTracksCacheValid = new Date(savedTracksCacheExpiry?.expiresAt || 0).getTime() > new Date().getTime();
 
     // キャッシュが有効な場合
     if (isSavedTracksCacheValid) {
       // NOTE: 取得済の場合はアプリ上でデータが変わっている場合があるのでアプリ上のデータを使用する
-      if (savedTracks.length === 0) setSavedTracks(spotifyData.savedTracks);
+      if (savedTracks.length === 0) setSavedTracks(spotifyData.savedTracks || []);
     }
     // 有効期限切れのとき
     else {
@@ -173,7 +174,7 @@ export default function TopTracksPage() {
 
             // セッションに保存
             const currentSessionData = sessionStorage.getItem('spotifyData');
-            let updatedSessionData = {};
+            let updatedSessionData: SpotifyData = {};
             if (currentSessionData) updatedSessionData = JSON.parse(currentSessionData);
             updatedSessionData.savedTracks = data.savedTracks;
             sessionStorage.setItem('spotifyData', JSON.stringify(updatedSessionData));
@@ -198,11 +199,11 @@ export default function TopTracksPage() {
 
     // プレイリストを取得
     const playlistsCacheExpiry = cacheExpiries.find((item: { type: string }) => item.type === 'playlists');
-    const isPlaylistsCacheValid = new Date(playlistsCacheExpiry?.expiresAt).getTime() > new Date().getTime();
+    const isPlaylistsCacheValid = new Date(playlistsCacheExpiry?.expiresAt || 0).getTime() > new Date().getTime();
 
     // キャッシュが有効な場合かつ未取得の場合
     if (isPlaylistsCacheValid) {
-      if (playlists.length === 0) setPlaylists(spotifyData.playlists);
+      if (playlists.length === 0) setPlaylists(spotifyData.playlists || []);
     }
     // 有効期限切れのとき
     else {
@@ -218,7 +219,7 @@ export default function TopTracksPage() {
 
             // セッションに保存
             const currentSessionData = sessionStorage.getItem('spotifyData');
-            let updatedSessionData = {};
+            let updatedSessionData: SpotifyData = {};
             if (currentSessionData) updatedSessionData = JSON.parse(currentSessionData);
             updatedSessionData.playlists = data.playlists;
             sessionStorage.setItem('spotifyData', JSON.stringify(updatedSessionData));
@@ -278,20 +279,20 @@ export default function TopTracksPage() {
     const periods = ["All Time", "6 Months", "4 Weeks"];
 
     // 欠損値を補完する関数
-    const fillMissingData = (tracks, periods) => {
-      const trackNames = Array.from(new Set(tracks.map((track) => track[1])));
-      const filledTracks = [];
+    const fillMissingData = (tracks: any, periods: any) => {
+      const trackNames = Array.from(new Set(tracks.map((track: any) => track[1])));
+      const filledTracks: any = [];
 
       trackNames.forEach((trackName) => {
-        periods.forEach((period) => {
+        periods.forEach((period: any) => {
           const existingTrack = tracks.find(
-            (track) => track[1] === trackName && track[2] === period
+            (track: any) => track[1] === trackName && track[2] === period
           );
           if (existingTrack) {
             filledTracks.push(existingTrack);
           } else {
             // 欠損値を補完
-            const imageUrl = tracks.find((track) => track[1] === trackName)?.[3] || ""; // TODO: 画像がない場合の画像を用意
+            const imageUrl = tracks.find((track: any) => track[1] === trackName)?.[3] || ""; // TODO: 画像がない場合の画像を用意
             filledTracks.push([51, trackName, period, imageUrl]);
           }
         });
@@ -441,7 +442,7 @@ export default function TopTracksPage() {
           min: 1,
           max: 50,
           axisLabel: {
-            formatter: (value) => `#${value}`,
+            formatter: (value: any) => `#${value}`,
           },
         },
         grid: {
@@ -489,7 +490,7 @@ export default function TopTracksPage() {
               savedTracks={savedTracks}
               playlists={playlists}
               isShowingPlaylist={false}
-              showingPlaylist={{}}
+              showingPlaylist={null}
               setSavedTracks={setSavedTracks}
             />
             <h2 className="pt-8 menu-title">Top Tracks in 6 Months</h2>
@@ -499,7 +500,7 @@ export default function TopTracksPage() {
               savedTracks={savedTracks}
               playlists={playlists}
               isShowingPlaylist={false}
-              showingPlaylist={{}}
+              showingPlaylist={null}
               setSavedTracks={setSavedTracks}
             />
             <h2 className="pt-8 menu-title">Top Tracks of All Time</h2>
@@ -509,7 +510,7 @@ export default function TopTracksPage() {
               savedTracks={savedTracks}
               playlists={playlists}
               isShowingPlaylist={false}
-              showingPlaylist={{}}
+              showingPlaylist={null}
               setSavedTracks={setSavedTracks}
             />
           </div>

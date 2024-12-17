@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     return prisma.spotifyCache.upsert({
       where: {
         spotifyId_type: {
-          spotifyId: session.user.spotifyId,
+          spotifyId: session.user.spotifyId || "",
           type,
         },
       },
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
         expiresAt: new Date(Date.now() + 3600 * 1000), // 1時間後
       },
       create: {
-        spotifyId: session.user.spotifyId,
+        spotifyId: session.user.spotifyId || "",
         type,
         expiresAt: new Date(Date.now() + 3600 * 1000), // 1時間後
       },

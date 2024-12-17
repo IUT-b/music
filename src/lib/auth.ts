@@ -1,3 +1,5 @@
+import { Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";
 import { prisma } from "@/lib/prisma";
 
@@ -28,7 +30,11 @@ export const authOptions = {
   ],
   callbacks: {
     // NOTE: userはspotify側で自動で設定される(user.idはSpotifyのIDが設定される)
-    async jwt({ token, account, user }) {
+    async jwt({ token, account, user }: {
+      token: JWT;
+      account?: Record<string, any>;
+      user?: Record<string, any>;
+    }) {
       if (account && account.provider === "spotify") {
         console.log('token:', token);
         console.log('account:', account);
@@ -48,7 +54,7 @@ export const authOptions = {
               name: user.name || "",
               email: user.email || "",
               spotifyId: user.id,
-              refreshToken: token.refreshToken,
+              refreshToken: token.refreshToken as string,
             },
           });
         }
@@ -56,17 +62,15 @@ export const authOptions = {
 
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: {
+      session: Session;
+      token: JWT & { spotifyId?: string; accessToken?: string; refreshToken?: string };
+    }) {
       if (token.spotifyId) {
         // NOTE: userにはNexAuthがデフォルトで提供するプロパティ(name, email, image等)が含まれる
         session.user.spotifyId = token.spotifyId;
       }
-      if (token.accessToken) {
-        session.accessToken = token.accessToken;
-      }
-      if (token.refreshToken) {
-        session.refreshToken = token.refreshToken;
-      }
+
       return session;
     },
   },
@@ -131,26 +135,3 @@ export async function getAccessToken(spotifyId: string): Promise<string | null> 
     return null;
   }
 }
-
-// Spotifyのaccess tokenを設定
-// export function setAccessToken(accessToken: string) {
-//   spotifyApi.setAccessToken(accessToken);
-// }
-
-// Spotifyのrefresh tokenを設定
-// export function setRefreshToken(refreshToken: string) {
-//   spotifyApi.setRefreshToken(refreshToken);
-// }
-
-// Spotifyのaccess tokenを更新
-// export async function refreshAccessToken(refreshToken: string) {
-//   try {
-//     const data = await spotifyApi.refreshAccessToken(refreshToken);
-//     const newAccessToken = data.body["access_token"];
-//     spotifyApi.setAccessToken(newAccessToken);
-//     return newAccessToken;
-//   } catch (error) {
-//     console.error("Error refreshing access token", error);
-//     throw error;
-//   }
-// }
