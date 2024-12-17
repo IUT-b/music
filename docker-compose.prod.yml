@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    env_file:
+      - .env.production
+
+  nextjs:
+    build: .
+    container_name: nextjs-app
+    ports:
+      - "3000:3000"
+      # - "80:3000" # apacheで使用中のため使用できない 
+    env_file:
+      - .env.production
+    depends_on:
+      - postgres
+    restart: always
+    command: ["sh", "-c", "npx prisma migrate deploy && npm run start"]
+
+volumes:
+  postgres_data:
