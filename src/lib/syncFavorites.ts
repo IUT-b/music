@@ -32,7 +32,7 @@ export async function syncFavoritesWithSpotify(token: string, userSpotifyId: str
       });
     } else {
       // 既に登録されている曲がSpotifyに残っている場合、解除日を設定しない
-      const activePeriod = existingFavorite.periods.find((p) => !p.endDate);
+      const activePeriod = existingFavorite.periods.find((p: any) => !p.endDate);
       if (!activePeriod) {
         // 過去に解除されている場合、新たに登録日を追加
         await prisma.favoritePeriod.create({
@@ -55,7 +55,7 @@ export async function syncFavoritesWithSpotify(token: string, userSpotifyId: str
 
     if (!trackExistsInSpotify) {
       // Spotifyに存在しない曲は解除扱いにする
-      const activePeriod = favorite.periods.find((p) => !p.endDate);
+      const activePeriod = favorite.periods.find((p: any) => !p.endDate);
       if (activePeriod) {
         await prisma.favoritePeriod.update({
           where: { id: activePeriod.id },
